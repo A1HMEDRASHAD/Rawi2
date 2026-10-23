@@ -1,3 +1,6 @@
+// ============================================================================
+// الجزء الأول (1/2) من ملف app.js للموقع العام — شبكة البوصلة
+// ============================================================================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { 
   getFirestore, 
@@ -9,7 +12,7 @@ import {
   increment 
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// 1. إعدادات Firebase الديناميكية (تدعم النقل والبيع كنظام SaaS)
+// 1. إعدادات Firebase الافتراضية أو المخصصة (لدعم بيع ونقل النظام SaaS)
 const DEFAULT_FIREBASE_CONFIG = {
   apiKey: "AIzaSyAd4Df_Fpp2GlGkRPyvmKuFW68LbL_a4yU",
   authDomain: "rawi-01.firebaseapp.com",
@@ -27,14 +30,16 @@ function getActiveFirebaseConfig() {
       const parsed = JSON.parse(saved);
       if (parsed && parsed.apiKey && parsed.projectId) return parsed;
     }
-  } catch (e) {}
+  } catch (e) {
+    console.warn("Using default Firebase config.");
+  }
   return DEFAULT_FIREBASE_CONFIG;
 }
 
 const DEFAULT_LOGO = "https://i.ibb.co/BHHHLttP/image.png";
 const DEFAULT_FAVICON = "https://i.ibb.co/WWSTnMgd/image.jpg";
 
-// دوال حماية صارمة لمنع توقف المحرك
+// دوال حماية صارمة لمنع انهيار المحرك تحت أي ظرف
 const $ = (id) => document.getElementById(id);
 const safeOn = (id, event, handler) => {
   const el = document.getElementById(id);
@@ -52,7 +57,7 @@ const setHtml = (id, val) => {
 const app = initializeApp(getActiveFirebaseConfig());
 const db = getFirestore(app);
 
-// 2. قاموس اللغتين الشامل لواجهة الموقع
+// 2. قاموس اللغتين الشامل لواجهة الموقع (عربي / English)
 const I18N = {
   ar: {
     home: "الرئيسية",
@@ -70,7 +75,6 @@ const I18N = {
     linkCopied: "تم نسخ رابط المادة بنجاح",
     relatedHeading: "موضوعات ذات صلة",
     authorBadge: "قلم في شبكة البوصلة",
-    authorVerifiedBadge: "صحفي موثق في شبكة البوصلة",
     authorTotalPosts: "إجمالي المواد المنشورة:",
     aboutUs: "من نحن",
     privacyPolicy: "سياسة الخصوصية",
@@ -87,7 +91,7 @@ const I18N = {
     editorialTeam: "هيئة التحرير",
     rightsReserved: "© جميع الحقوق محفوظة —",
     contactUsHeader: "للتواصل والإعلانات الرسمية",
-    translatingMsg: "جاري تعريب المحتوى..."
+    translatingWait: "جاري ترجمة المحتوى بالكامل..."
   },
   en: {
     home: "Home",
@@ -104,8 +108,7 @@ const I18N = {
     copyLink: "Copy Link",
     linkCopied: "Article link copied to clipboard",
     relatedHeading: "Related Coverage",
-    authorBadge: "Contributor at Al-Bosla Network",
-    authorVerifiedBadge: "Verified Journalist at Al-Bosla Network",
+    authorBadge: "Verified Contributor at Al-Bosla",
     authorTotalPosts: "Total Published Articles:",
     aboutUs: "About Us",
     privacyPolicy: "Privacy Policy",
@@ -122,16 +125,16 @@ const I18N = {
     editorialTeam: "Editorial Desk",
     rightsReserved: "© All Rights Reserved —",
     contactUsHeader: "Official Contact & Advertising",
-    translatingMsg: "Translating full content to English..."
+    translatingWait: "Translating full content to English..."
   }
 };
 
 const FALLBACK_CATEGORIES = [
   { name: "محلية", nameEn: "Local News", slug: "local", icon: "location_on", order: 1, visible: true, subcategories: ["السياسة اليمنية", "شؤون المحافظات"] },
   { name: "دولية", nameEn: "International", slug: "world", icon: "public", order: 2, visible: true, subcategories: ["الشرق الأوسط", "السياسة الدولية"] },
-  { name: "تحقيقات وتقارير", nameEn: "Reports & Investigations", slug: "reports", icon: "policy", order: 3, visible: true, subcategories: ["ملفات خاصة", "تقارير معمقة"] },
+  { name: "تحقيقات وتقارير", nameEn: "Reports", slug: "reports", icon: "policy", order: 3, visible: true, subcategories: ["ملفات خاصة", "تقارير معمقة"] },
   { name: "حوارات", nameEn: "Interviews", slug: "interviews", icon: "forum", order: 4, visible: true, subcategories: [] },
-  { name: "المقالات", nameEn: "Opinion Articles", slug: "articles", icon: "edit_note", order: 5, visible: true, subcategories: [] },
+  { name: "المقالات", nameEn: "Opinion", slug: "articles", icon: "edit_note", order: 5, visible: true, subcategories: [] },
   { name: "نافذة التقنية", nameEn: "Technology", slug: "tech", icon: "memory", order: 6, visible: true, subcategories: [] },
   { name: "الثقافة والفن", nameEn: "Culture & Art", slug: "culture", icon: "theater_comedy", order: 7, visible: true, subcategories: [] }
 ];
@@ -162,7 +165,7 @@ let siteSettings = {
 };
 
 let publishedPosts = [];
-let staffProfilesMap = {}; // خريطة ملفات الكتّاب والصحفيين الموثقين
+let staffDirectory = {}; // دليل بيانات وتوثيق الصحفيين
 let categories = [...FALLBACK_CATEGORIES];
 let activeAds = [];
 let selectedCategory = "all";
@@ -170,53 +173,51 @@ let selectedSubcategory = "all";
 let searchQuery = "";
 const trackedAdImpressions = new Set();
 
-// متغيرات شريط الأخبار العاجلة الدوّار الذكي
+// متغيرات شريط العاجل الدوار
 let breakingNewsList = [];
-let currentBreakingIndex = 0;
-let breakingIntervalTimer = null;
+let breakingCurrentIndex = 0;
+let breakingIntervalId = null;
 
 function t(key) {
   return (I18N[currentLang] && I18N[currentLang][key]) ? I18N[currentLang][key] : (I18N.ar[key] || key);
 }
 
-// =========================================================================
-// 3. محرك الترجمة الفورية الشاملة (Full-Site & Full-Article AI/Cloud Engine)
-// =========================================================================
-const translationMemory = new Map();
+// ============================================================================
+// 3. محرك الترجمة الشاملة الفورية (Full Site & Articles Translation Engine)
+// ============================================================================
+const translationCache = new Map();
 
-function loadCachedTranslations() {
-  try {
-    const raw = sessionStorage.getItem("bosla_translation_cache_v2");
-    if (raw) {
-      const obj = JSON.parse(raw);
-      Object.entries(obj).forEach(([k, v]) => translationMemory.set(k, v));
-    }
-  } catch (e) {}
+function showTranslationStatus(show) {
+  const bar = $("translation-status-bar");
+  if (!bar) return;
+  setText("translation-status-text", t("translatingWait"));
+  bar.classList.toggle("hidden", !show);
 }
-
-function saveCachedTranslations() {
-  try {
-    const obj = {};
-    translationMemory.forEach((v, k) => {
-      if (k.length < 300) obj[k] = v;
-    });
-    sessionStorage.setItem("bosla_translation_cache_v2", JSON.stringify(obj));
-  } catch (e) {}
-}
-
-loadCachedTranslations();
 
 async function translateSingleText(text, targetLang = "en") {
-  if (!text || !text.trim()) return "";
+  if (!text || typeof text !== "string") return "";
   const clean = text.trim();
+  if (!clean) return "";
+  if (targetLang === "ar") return clean;
+
   const cacheKey = `${targetLang}::${clean}`;
-  if (translationMemory.has(cacheKey)) return translationMemory.get(cacheKey);
+  if (translationCache.has(cacheKey)) return translationCache.get(cacheKey);
+
+  try {
+    const stored = sessionStorage.getItem(cacheKey);
+    if (stored) {
+      translationCache.set(cacheKey, stored);
+      return stored;
+    }
+  } catch (e) {}
 
   const provider = siteSettings.translateProvider || "auto_free";
   const apiKey = (siteSettings.translateApiKey || "").trim();
 
   try {
-    // 1. إذا اختار المالك Google Cloud Translation API الرسمي مع مفتاح
+    let translated = clean;
+
+    // 1. إذا اختار المالك Google Cloud Translation API الرسمي بمفتاحه الخاص
     if (provider === "google_cloud" && apiKey) {
       const res = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${encodeURIComponent(apiKey)}`, {
         method: "POST",
@@ -224,84 +225,70 @@ async function translateSingleText(text, targetLang = "en") {
         body: JSON.stringify({ q: clean, target: targetLang, format: "text" })
       });
       const json = await res.json();
-      const translated = json?.data?.translations?.[0]?.translatedText;
-      if (translated) {
-        translationMemory.set(cacheKey, translated);
-        saveCachedTranslations();
-        return translated;
+      if (json?.data?.translations?.[0]?.translatedText) {
+        translated = json.data.translations[0].translatedText;
       }
     }
-
-    // 2. إذا اختار المالك DeepL API مع مفتاح
-    if (provider === "deepl" && apiKey) {
-      const endpoint = apiKey.endsWith(":fx") ? "https://api-free.deepl.com/v2/translate" : "https://api.deepl.com/v2/translate";
-      const params = new URLSearchParams();
-      params.append("auth_key", apiKey);
-      params.append("text", clean);
-      params.append("target_lang", targetLang.toUpperCase());
-      const res = await fetch(endpoint, { method: "POST", body: params });
+    // 2. إذا اختار المالك DeepL API بمفتاحه الخاص
+    else if (provider === "deepl" && apiKey) {
+      const res = await fetch("https://api-free.deepl.com/v2/translate", {
+        method: "POST",
+        headers: {
+          "Authorization": `DeepL-Auth-Key ${apiKey}`,
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: new URLSearchParams({ text: clean, target_lang: targetLang.toUpperCase() })
+      });
       const json = await res.json();
-      const translated = json?.translations?.[0]?.text;
-      if (translated) {
-        translationMemory.set(cacheKey, translated);
-        saveCachedTranslations();
-        return translated;
+      if (json?.translations?.[0]?.text) {
+        translated = json.translations[0].text;
+      }
+    }
+    // 3. المترجم السحابي الفوري المدمج (يعمل تلقائياً بدون مفتاح أو كبديل ذكي)
+    else {
+      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(clean)}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      if (Array.isArray(data) && Array.isArray(data[0])) {
+        translated = data[0].map(seg => seg[0]).join("");
       }
     }
 
-    // 3. المحرك السحابي الفوري المدمج (يعمل تلقائياً وبسرعة فائقة)
-    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(clean)}`;
-    const res = await fetch(url);
-    const data = await res.json();
-    if (Array.isArray(data) && Array.isArray(data[0])) {
-      const result = data[0].map(part => part[0]).join("");
-      if (result) {
-        translationMemory.set(cacheKey, result);
-        saveCachedTranslations();
-        return result;
-      }
-    }
+    translationCache.set(cacheKey, translated);
+    try { sessionStorage.setItem(cacheKey, translated); } catch (e) {}
+    return translated;
   } catch (err) {
     console.warn("Translation notice:", err);
+    return clean;
   }
-  return clean;
 }
 
-function showTranslationLoader(show) {
-  const bar = $("translation-status-bar");
-  if (!bar) return;
-  setText("translation-status-text", t("translatingMsg"));
-  bar.classList.toggle("hidden", !show);
-}
+// ترجمة جميع بطاقات الأخبار والأقسام تلقائياً عند التبديل للإنجليزية
+async function ensureFeedTranslatedIfNeeded() {
+  if (currentLang !== "en" || publishedPosts.length === 0) return;
 
-// ترجمة جميع بطاقات الأخبار والأقسام والعاجل عند التحويل للإنجليزية
-async function translateAllFeedPostsIfNeeded() {
-  if (currentLang !== "en") return;
-
-  const untranslatedPosts = publishedPosts.filter(p => !p._enTranslatedReady);
+  const untranslatedPosts = publishedPosts.filter(p => !p._translatedEnReady);
   if (untranslatedPosts.length === 0) return;
 
-  showTranslationLoader(true);
+  showTranslationStatus(true);
   try {
     await Promise.all(untranslatedPosts.map(async (post) => {
-      const [tTitle, tSum, tAuthor, tCat] = await Promise.all([
+      const [tTitle, tSummary, tAuthor] = await Promise.all([
         post.titleEn ? Promise.resolve(post.titleEn) : translateSingleText(post.title, "en"),
         post.summaryEn ? Promise.resolve(post.summaryEn) : translateSingleText(post.summary, "en"),
-        translateSingleText(post.author || "هيئة التحرير", "en"),
-        post.categoryNameEn ? Promise.resolve(post.categoryNameEn) : translateSingleText(post.categoryName || "عام", "en")
+        translateSingleText(post.author || "هيئة التحرير", "en")
       ]);
-      post._titleEn = tTitle;
-      post._summaryEn = tSum;
-      post._authorEn = tAuthor;
-      post._catEn = tCat;
-      post._enTranslatedReady = true;
+      post._autoTitleEn = tTitle;
+      post._autoSummaryEn = tSummary;
+      post._autoAuthorEn = tAuthor;
+      post._translatedEnReady = true;
     }));
   } finally {
-    showTranslationLoader(false);
+    showTranslationStatus(false);
   }
 }
 
-// 4. تفعيل الأزرار والتفاعلات فوراً عند فتح الموقع
+// 4. تفعيل الأزرار والتفاعلات فوراً عند فتح الصفحة
 function bindImmediateUIEvents() {
   initTheme();
   initLanguage();
@@ -315,11 +302,7 @@ function bindImmediateUIEvents() {
   safeOn("sidebar-backdrop", "click", closeSidebarDrawer);
   safeOn("theme-toggle-btn", "click", toggleTheme);
 
-  // أزرار التنقل اليدوي لشريط الأخبار العاجلة الدوّار
-  safeOn("breaking-prev-btn", "click", () => stepBreakingNews(-1));
-  safeOn("breaking-next-btn", "click", () => stepBreakingNews(1));
-
-  // زر تبديل اللغة الشامل (عربي <-> English)
+  // زر تبديل اللغة الشامل (يحول الموقع والمقالات بالكامل بين العربية والإنجليزية)
   safeOn("lang-toggle-btn", async () => {
     currentLang = currentLang === "ar" ? "en" : "ar";
     localStorage.setItem("bosla_lang", currentLang);
@@ -327,7 +310,7 @@ function bindImmediateUIEvents() {
     applyLanguageAndIdentity();
 
     if (currentLang === "en") {
-      await translateAllFeedPostsIfNeeded();
+      await ensureFeedTranslatedIfNeeded();
     }
 
     renderCategoriesNav();
@@ -350,18 +333,21 @@ function bindImmediateUIEvents() {
     setTimeout(updateMobileNavPill, 80);
   });
 
-  // البحث الذكي الفوري
+  // أزرار البحث الذكي الفوري
   safeOn("search-toggle-btn", "click", () => {
     const drawer = $("search-drawer");
     if (!drawer) return;
     drawer.classList.toggle("hidden");
-    if (!drawer.classList.contains("hidden")) $("global-search-input")?.focus();
+    if (!drawer.classList.contains("hidden")) {
+      $("global-search-input")?.focus();
+    }
   });
 
   safeOn("close-search-btn", "click", () => {
     $("search-drawer")?.classList.add("hidden");
     searchQuery = "";
-    if ($("global-search-input")) $("global-search-input").value = "";
+    const inp = $("global-search-input");
+    if (inp) inp.value = "";
     renderHomeFeed();
   });
 
@@ -371,6 +357,11 @@ function bindImmediateUIEvents() {
     renderHomeFeed();
   });
 
+  // أزرار التحكم اليدوي بشريط الأخبار العاجلة الدوار
+  safeOn("breaking-next-btn", "click", () => stepBreakingNews(1));
+  safeOn("breaking-prev-btn", "click", () => stepBreakingNews(-1));
+
+  // الشعار والعودة للرئيسية
   safeOn("home-brand-link", "click", (e) => {
     e.preventDefault();
     selectedCategory = "all";
@@ -393,6 +384,7 @@ function bindImmediateUIEvents() {
     });
   });
 
+  // شريط التنقل السفلي للهواتف
   document.querySelectorAll(".mob-nav-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       document.querySelectorAll(".mob-nav-btn").forEach(b => b.classList.remove("active"));
@@ -420,32 +412,7 @@ function bindImmediateUIEvents() {
   window.addEventListener("popstate", handleUrlRouting);
 }
 
-// 5. إقلاع الموقع وجلب البيانات من Firebase
-async function bootPublicSite() {
-  bindImmediateUIEvents();
-
-  await Promise.allSettled([
-    fetchSettings(),
-    fetchCategories(),
-    fetchStaffProfiles(),
-    fetchPublishedPosts(),
-    fetchSponsoredAds()
-  ]);
-
-  if (currentLang === "en") {
-    await translateAllFeedPostsIfNeeded();
-  }
-
-  applyLanguageAndIdentity();
-  renderCategoriesNav();
-  renderSidebarMenu();
-  renderBreakingTicker();
-  renderTopBannerAd();
-  renderTrendingSidebar();
-  await handleUrlRouting();
-  setTimeout(updateMobileNavPill, 120);
-}
-
+// 5. إدارة اللغة والمظهر الليلي/النهاري
 function initLanguage() {
   const savedLang = localStorage.getItem("bosla_lang");
   if (savedLang === "ar" || savedLang === "en") {
@@ -503,7 +470,7 @@ function closeSidebarDrawer() {
   $("sidebar-backdrop")?.classList.add("hidden");
 }
 
-// 6. جلب الإعدادات وتطبيق الهوية البصرية وصورة معاينة واتساب المستقلة (og:image)
+// 6. جلب وتطبيق الهوية البصرية وصورة المعاينة المستقلة لواتساب (og:image)
 async function fetchSettings() {
   try {
     const snap = await getDoc(doc(db, "settings", "global"));
@@ -516,18 +483,9 @@ async function fetchSettings() {
         faviconUrl: data.faviconUrl || DEFAULT_FAVICON,
         ogImageUrl: data.ogImageUrl || data.faviconUrl || DEFAULT_FAVICON
       };
-      // تحديث إعدادات Firebase الديناميكية إن وجدت
-      if (data.firebaseCustomJson) {
-        try {
-          const parsed = JSON.parse(data.firebaseCustomJson);
-          if (parsed && parsed.apiKey && parsed.projectId) {
-            localStorage.setItem("bosla_custom_firebase_config", JSON.stringify(parsed));
-          }
-        } catch (e) {}
-      }
     }
   } catch (err) {
-    console.warn("Settings notice:", err);
+    console.warn("Settings fetch notice:", err);
   }
 }
 
@@ -561,7 +519,7 @@ function applyLanguageAndIdentity() {
   setText("ui-site-name", displaySiteName);
   setText("ui-network-name", displayNetName);
   setText("footer-site-name", displaySiteName);
-  setText("footer-site-desc", currentLang === "en" ? `${displaySiteName} — Independent news and analytical platform under ${displayNetName}.` : siteSettings.siteDesc);
+  setText("footer-site-desc", currentLang === "en" ? `${displaySiteName} — ${displayNetName}` : siteSettings.siteDesc);
 
   setText("ui-breaking-label", t("breaking"));
   if ($("global-search-input")) $("global-search-input").placeholder = t("searchPlaceholder");
@@ -597,40 +555,7 @@ function applyLanguageAndIdentity() {
   setHtml("sidebar-social-links", links.join(""));
 }
 
-// 7. جلب ملفات الصحفيين والكتّاب الموثقين (لعرض الصور الشخصية والشارة الزرقاء والسيرة الذاتية)
-async function fetchStaffProfiles() {
-  try {
-    const snap = await getDocs(collection(db, "staff"));
-    staffProfilesMap = {};
-    snap.docs.forEach(d => {
-      const data = d.data();
-      const emailKey = d.id.toLowerCase().trim();
-      staffProfilesMap[emailKey] = data;
-      if (data.name) staffProfilesMap[data.name.trim()] = data;
-      if (data.displayName) staffProfilesMap[data.displayName.trim()] = data;
-    });
-  } catch (err) {
-    console.warn("Staff profiles notice:", err);
-  }
-}
-
-function getAuthorMetadata(post) {
-  const emailKey = (post.authorEmail || "").toLowerCase().trim();
-  const nameKey = (post.author || "").trim();
-  const staffDoc = staffProfilesMap[emailKey] || staffProfilesMap[nameKey] || {};
-
-  const isSovereign = emailKey === "a1hmedrashad@gmail.com" || emailKey === "rawialshamal@gmail.com";
-  const verified = isSovereign || staffDoc.verified === true || post.authorVerified === true;
-  const avatar = staffDoc.avatarUrl || post.authorAvatar || siteSettings.faviconUrl || DEFAULT_FAVICON;
-  const bio = staffDoc.bio || post.authorBio || "";
-  const jobTitle = staffDoc.jobTitle || post.authorJobTitle || "";
-  const socialX = staffDoc.socialX || "";
-  const socialFb = staffDoc.socialFb || "";
-
-  return { verified, avatar, bio, jobTitle, socialX, socialFb };
-}
-
-// 8. جلب الأقسام وبناء شريط الأقسام والقائمة الجانبية
+// 7. جلب الأقسام وبناء شريط الأقسام + القائمة الجانبية
 async function fetchCategories() {
   try {
     const snap = await getDocs(collection(db, "categories"));
@@ -670,7 +595,9 @@ function renderCategoriesNav() {
   `;
 
   nav.querySelectorAll(".cat-pill").forEach(btn => {
-    btn.addEventListener("click", () => selectCategoryAndRender(btn.dataset.cat));
+    btn.addEventListener("click", () => {
+      selectCategoryAndRender(btn.dataset.cat);
+    });
   });
 }
 
@@ -762,19 +689,3 @@ function renderSubcategoriesBar() {
     });
   });
 }
-
-// 9. جلب المنشورات ودوال القراءة المترجمة
-async function fetchPublishedPosts() {
-  try {
-    const snap = await getDocs(collection(db, "posts"));
-    const raw = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    publishedPosts = raw
-      .filter(p => p.status === "published")
-      .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-  } catch (err) {
-    console.error("Error loading posts:", err);
-  }
-}
-
-function getPostTitle(post) {
-  if (currentLang ===
