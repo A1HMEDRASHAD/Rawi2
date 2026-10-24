@@ -1,318 +1,528 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl" data-theme="dark" translate="yes">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>بوصلة السياسة اليمنية | شبكة البوصلة</title>
-  <meta id="meta-desc" name="description" content="منصة إخبارية وتحليلية ترصد كواليس السياسة والتقنية والثقافة">
+// ============================================================================
+// شبكة البوصلة الإخبارية — محرك الموقع العام (النسخة النهائية المؤمّنة) — الجزء (1/2)
+// ============================================================================
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  updateDoc,
+  increment
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  <!-- وسوم المشاركة الاجتماعية (Open Graph & Twitter) بدون أي روابط قديمة -->
-  <meta id="og-title" property="og:title" content="بوصلة السياسة اليمنية | شبكة البوصلة">
-  <meta id="og-desc" property="og:description" content="منصة إخبارية وتحليلية ترصد كواليس السياسة والتقنية والثقافة">
-  <meta property="og:type" content="website">
-  <meta id="og-image" property="og:image" content="">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta id="twitter-image" name="twitter:image" content="">
+// 1. إعدادات الاتصال بقاعدة البيانات (قابلة للتخصيص ديناميكياً لنظام SaaS)
+const DEFAULT_FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAd4Df_Fpp2GlGkRPyvmKuFW68LbL_a4yU",
+  authDomain: "rawi-01.firebaseapp.com",
+  projectId: "rawi-01",
+  storageBucket: "rawi-01.firebasestorage.app",
+  messagingSenderId: "91203142966",
+  appId: "1:91203142966:web:a44f7c06c98529a57a9f97",
+  measurementId: "G-2VNWNSZLBJ"
+};
 
-  <!-- أيقونة الموقع الديناميكية (تُجلب حصرياً من غرفة العمليات) -->
-  <link id="dynamic-favicon" rel="icon" href="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
-  <link id="apple-favicon" rel="apple-touch-icon" href="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+function getActiveFirebaseConfig() {
+  try {
+    const saved = localStorage.getItem("bosla_custom_firebase_config");
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed && parsed.apiKey && parsed.projectId) return parsed;
+    }
+  } catch (e) {
+    console.warn("Firebase config fallback active.");
+  }
+  return DEFAULT_FIREBASE_CONFIG;
+}
 
-  <!-- الخطوط العربية الرسمية وأيقونات جوجل -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,500,1,0" rel="stylesheet">
+const app = initializeApp(getActiveFirebaseConfig());
+const db = getFirestore(app);
 
-  <!-- ملف التصميم الزجاجي المتجاوب -->
-  <link rel="stylesheet" href="./style.css">
-</head>
-<body>
+// 2. ثوابت الكاش والأغلفة الزجاجية المدمجة برمجياً (بدون أي روابط خارجية)
+const SETTINGS_CACHE_KEY = "bosla_public_settings_final_v1";
+const SESSION_VIEWS_KEY = "bosla_session_viewed_posts";
+const SESSION_ADS_KEY = "bosla_session_tracked_ads";
 
-  <!-- 1. الترويسة الزجاجية العلوية (بدون زر ترجمة وبدون شعار قديم) -->
-  <header class="site-header glass-surface">
-    <div class="container header-inner">
-      <div class="header-right">
-        <button type="button" id="open-sidebar-btn" class="icon-btn" aria-label="القائمة الجانبية">
-          <span class="material-symbols-rounded" translate="no">menu</span>
-        </button>
+const BLANK_SURFACE_SVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='360' viewBox='0 0 600 360'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%230f172a'/><stop offset='100%' stop-color='%231e293b'/></linearGradient></defs><rect width='100%' height='100%' fill='url(%23g)'/><circle cx='300' cy='180' r='42' fill='none' stroke='%233b82f6' stroke-width='2' stroke-opacity='0.35'/><polygon points='300,148 312,188 300,178 288,188' fill='%233b82f6' fill-opacity='0.5'/></svg>";
 
-        <a href="./" id="home-brand-link" class="brand-link">
-          <img id="custom-logo-img" class="brand-logo" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="شعار المنصة" style="opacity:0;">
-          <div id="brand-text-wrap" class="brand-text hidden">
-            <span id="ui-site-name" class="brand-title">بوصلة السياسة اليمنية</span>
-            <span id="ui-network-name" class="brand-subtitle">شبكة البوصلة</span>
-          </div>
-        </a>
-      </div>
+const BLANK_AVATAR_SVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><rect width='100%' height='100%' rx='60' fill='%231e293b'/><circle cx='60' cy='45' r='22' fill='%23475569'/><path d='M24 106 C24 76 96 76 96 106' fill='%23475569'/></svg>";
 
-      <div class="header-left">
-        <button type="button" id="search-toggle-btn" class="icon-btn" aria-label="البحث الذكي">
-          <span class="material-symbols-rounded" translate="no">search</span>
-        </button>
-        <button type="button" id="theme-toggle-btn" class="icon-btn" aria-label="تبديل المظهر">
-          <span id="theme-icon" class="material-symbols-rounded" translate="no">light_mode</span>
-        </button>
-      </div>
-    </div>
+// 3. درع الحماية الأمني وتعقيم المدخلات (XSS Protection) + دوال الـ DOM الآمنة
+const $ = (id) => document.getElementById(id);
 
-    <!-- درج البحث الفوري الذكي -->
-    <div id="search-drawer" class="search-drawer hidden">
-      <div class="container search-drawer-inner">
-        <span class="material-symbols-rounded search-icon" translate="no">manage_search</span>
-        <input type="search" id="global-search-input" placeholder="ابحث بذكاء في العناوين، الملخصات، الكتّاب، أو الوسوم..." autocomplete="off">
-        <span id="search-count-badge" class="search-badge hidden">0</span>
-        <button type="button" id="close-search-btn" class="icon-btn sm-btn" aria-label="إغلاق البحث">
-          <span class="material-symbols-rounded" translate="no">close</span>
-        </button>
-      </div>
-    </div>
+const safeOn = (id, event, handler) => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener(event, handler);
+};
 
-    <!-- شريط الأقسام الرئيسي والفرعي -->
-    <nav class="categories-bar" aria-label="أقسام الموقع">
-      <div class="container">
-        <div id="categories-nav-list" class="categories-scroll"></div>
-        <div id="subcategories-bar" class="subcategories-scroll hidden"></div>
-      </div>
-    </nav>
-  </header>
+const setText = (id, val) => {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val ?? "";
+};
 
-  <!-- 2. شريط الأخبار العاجلة الدوّار الذكي -->
-  <section id="breaking-ticker-wrap" class="breaking-wrap hidden" aria-label="أخبار عاجلة">
-    <div class="container breaking-inner glass-surface">
-      <div class="breaking-badge">
-        <span class="pulse-dot"></span>
-        <span id="ui-breaking-label">عاجل</span>
-      </div>
-      <div id="breaking-list" class="breaking-content"></div>
-      <div class="breaking-controls" translate="no">
-        <span id="breaking-counter" class="breaking-counter">1/1</span>
-        <button type="button" id="breaking-prev-btn" class="ticker-nav-btn" aria-label="الخبر السابق">
-          <span class="material-symbols-rounded">chevron_right</span>
-        </button>
-        <button type="button" id="breaking-next-btn" class="ticker-nav-btn" aria-label="الخبر التالي">
-          <span class="material-symbols-rounded">chevron_left</span>
-        </button>
-      </div>
-    </div>
-  </section>
+const setHtml = (id, val) => {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = val ?? "";
+};
 
-  <!-- 3. مساحة الإعلانات والراعي الرسمي العلوية -->
-  <div class="container">
-    <div id="ad-slot-top" class="ad-slot-wrapper"></div>
-  </div>
+function escapeHTML(str) {
+  if (str === null || str === undefined) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
 
-  <!-- 4. المحتوى الرئيسي للموقع (الأقسام والأوضاع الـ 4) -->
-  <main class="container main-content">
+function sanitizeUrl(url, fallback = "") {
+  if (!url || typeof url !== "string") return fallback;
+  const trimmed = url.trim();
+  if (
+    trimmed.startsWith("https://") ||
+    trimmed.startsWith("http://") ||
+    trimmed.startsWith("data:image/") ||
+    trimmed.startsWith("mailto:")
+  ) {
+    return trimmed;
+  }
+  return fallback;
+}
 
-    <!-- (أ) واجهة الصفحة الرئيسية وتدفق الأخبار -->
-    <section id="view-home" class="view-section">
-      <div id="hero-section" class="hero-section"></div>
+// إدارة سجل الجلسة لمنع تكرار احتساب المشاهدات الوهمية
+function hasSessionRecord(storageKey, itemId) {
+  try {
+    const list = JSON.parse(sessionStorage.getItem(storageKey) || "[]");
+    return list.includes(itemId);
+  } catch (e) {
+    return false;
+  }
+}
 
-      <div class="home-layout-grid">
-        <!-- العمود الرئيسي للمقالات -->
-        <div class="feed-column">
-          <div class="section-header">
-            <h2 id="feed-heading" class="section-title">أحدث التحليلات والتقارير</h2>
-            <div class="section-line"></div>
-          </div>
+function addSessionRecord(storageKey, itemId) {
+  try {
+    const list = JSON.parse(sessionStorage.getItem(storageKey) || "[]");
+    if (!list.includes(itemId)) {
+      list.push(itemId);
+      sessionStorage.setItem(storageKey, JSON.stringify(list));
+    }
+  } catch (e) {}
+}
 
-          <div id="posts-grid" class="posts-grid">
-            <div id="loading-skeleton" class="skeleton-card glass-surface">
-              <div class="spinner-ring"></div>
-              <span>جاري تحميل المواد الصحفية...</span>
-            </div>
-          </div>
-        </div>
+// 4. الحالة المركزية للموقع والإعدادات الافتراضية النظيفة
+const FALLBACK_CATEGORIES = [
+  { name: "محلية", slug: "local", icon: "location_on", order: 1, visible: true, subcategories: ["السياسة اليمنية", "شؤون المحافظات"] },
+  { name: "دولية", slug: "world", icon: "public", order: 2, visible: true, subcategories: ["الشرق الأوسط", "السياسة الدولية"] },
+  { name: "تحقيقات وتقارير", slug: "reports", icon: "policy", order: 3, visible: true, subcategories: ["ملفات خاصة", "تقارير معمقة"] },
+  { name: "حوارات", slug: "interviews", icon: "forum", order: 4, visible: true, subcategories: [] },
+  { name: "المقالات", slug: "articles", icon: "edit_note", order: 5, visible: true, subcategories: [] },
+  { name: "نافذة التقنية", slug: "tech", icon: "memory", order: 6, visible: true, subcategories: [] },
+  { name: "الثقافة والفن", slug: "culture", icon: "theater_comedy", order: 7, visible: true, subcategories: [] }
+];
 
-        <!-- العمود الجانبي للأكثر قراءة -->
-        <aside class="sidebar-column">
-          <div class="trending-widget glass-surface">
-            <div class="widget-header">
-              <span class="material-symbols-rounded trend-icon" translate="no">local_fire_department</span>
-              <h3 id="ui-trending-heading">الأكثر قراءة في البوصلة</h3>
-            </div>
-            <div id="trending-list" class="trending-list"></div>
-          </div>
-        </aside>
-      </div>
-    </section>
+let siteSettings = {
+  siteName: "بوصلة السياسة اليمنية",
+  networkName: "شبكة البوصلة",
+  siteDesc: "منصة إخبارية وتحليلية ترصد كواليس السياسة والتقنية والثقافة",
+  logoUrl: "",
+  faviconUrl: "",
+  ogImageUrl: "",
+  hideTextLogo: true,
+  accentColor: "#3b82f6",
+  showAboutMenu: true,
+  aboutContent: "",
+  privacyContent: "",
+  contactEmail: "",
+  contactPhone: "",
+  socialWhatsapp: "",
+  socialTelegram: "",
+  socialX: "",
+  socialFacebook: "",
+  adsEnabled: false,
+  customAdText: "",
+  customAdLink: ""
+};
 
-    <!-- (ب) واجهة قراءة المقال الكامل والوسائط -->
-    <section id="view-article" class="view-section hidden">
-      <article class="article-container glass-surface">
-        <div class="article-top-bar">
-          <button type="button" id="back-to-home-btn" class="back-pill-btn">
-            <span id="back-arrow-icon" class="material-symbols-rounded" translate="no">arrow_forward</span>
-            <span id="ui-back-btn-text">العودة للأخبار</span>
-          </button>
-          <div id="art-badges" class="article-badges"></div>
-        </div>
+// قراءة فورية للكاش في اللحظة صفر لمنع أي وميض للشعار
+try {
+  const cached = localStorage.getItem(SETTINGS_CACHE_KEY);
+  if (cached) {
+    const parsed = JSON.parse(cached);
+    if (parsed && typeof parsed === "object") {
+      siteSettings = { ...siteSettings, ...parsed };
+    }
+  }
+} catch (e) {}
 
-        <h1 id="art-title" class="article-main-title"></h1>
-        <p id="art-summary" class="article-lead-summary"></p>
+let publishedPosts = [];
+let staffDirectory = {};
+let categories = [...FALLBACK_CATEGORIES];
+let activeAds = [];
+let selectedCategory = "all";
+let selectedSubcategory = "all";
+let searchQuery = "";
 
-        <div class="article-meta-bar">
-          <button type="button" id="art-author-btn" class="author-meta-trigger">
-            <img id="art-author-avatar" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="صورة الكاتب" class="author-avatar-sm">
-            <div class="author-meta-text">
-              <div class="author-name-row">
-                <span id="art-author" class="author-name"></span>
-                <span id="art-author-verified" class="verified-badge hidden" translate="no" title="صحفي موثق">verified</span>
-              </div>
-              <span id="art-date" class="article-date"></span>
-            </div>
-          </button>
+let breakingNewsList = [];
+let breakingCurrentIndex = 0;
+let breakingIntervalId = null;
 
-          <div class="views-pill" title="عدد القراءات">
-            <span class="material-symbols-rounded" translate="no">visibility</span>
-            <span id="art-views">0</span>
-          </div>
-        </div>
+// 5. ربط الأحداث الفورية وتهيئة المظهر والشعار
+function bindImmediateUIEvents() {
+  initTheme();
+  applyIdentitySettings();
+  renderCategoriesNav();
+  renderSidebarMenu();
+  updateMobileNavPill();
 
-        <!-- مشغل الفيديو / البودكاست / الصورة البارزة -->
-        <div id="art-media-slot" class="article-media-slot"></div>
+  safeOn("open-sidebar-btn", "click", openSidebarDrawer);
+  safeOn("close-sidebar-btn", "click", closeSidebarDrawer);
+  safeOn("sidebar-backdrop", "click", closeSidebarDrawer);
+  safeOn("theme-toggle-btn", "click", toggleTheme);
 
-        <!-- نص المقال -->
-        <div id="art-body" class="article-content-body"></div>
+  // البحث الذكي الفوري
+  safeOn("search-toggle-btn", "click", () => {
+    const drawer = $("search-drawer");
+    if (!drawer) return;
+    drawer.classList.toggle("hidden");
+    if (!drawer.classList.contains("hidden")) {
+      $("global-search-input")?.focus();
+    }
+  });
 
-        <!-- الوسوم -->
-        <div id="art-tags" class="article-tags-wrap"></div>
+  safeOn("close-search-btn", "click", () => {
+    $("search-drawer")?.classList.add("hidden");
+    searchQuery = "";
+    const inp = $("global-search-input");
+    if (inp) inp.value = "";
+    renderHomeFeed();
+  });
 
-        <!-- شريط المشاركة الاجتماعية -->
-        <div class="share-box glass-surface">
-          <span id="ui-share-label" class="share-title">مشاركة المادة:</span>
-          <div class="share-buttons">
-            <button type="button" id="share-wa" class="share-btn wa-btn">WhatsApp</button>
-            <button type="button" id="share-tg" class="share-btn tg-btn">Telegram</button>
-            <button type="button" id="share-x" class="share-btn x-btn">X</button>
-            <button type="button" id="share-copy" class="share-btn copy-btn">
-              <span class="material-symbols-rounded" translate="no">content_copy</span>
-              <span id="ui-copy-link-label">نسخ الرابط</span>
-            </button>
-          </div>
-        </div>
-      </article>
+  safeOn("global-search-input", "input", (e) => {
+    searchQuery = (e.target.value || "").trim();
+    showView("view-home");
+    renderHomeFeed();
+  });
 
-      <!-- موضوعات ذات صلة -->
-      <div class="related-section">
-        <div class="section-header">
-          <h3 id="ui-related-heading" class="section-title">موضوعات ذات صلة</h3>
-          <div class="section-line"></div>
-        </div>
-        <div id="related-grid" class="posts-grid"></div>
-      </div>
-    </section>
+  // أزرار شريط العاجل الدوار
+  safeOn("breaking-next-btn", "click", () => stepBreakingNews(1));
+  safeOn("breaking-prev-btn", "click", () => stepBreakingNews(-1));
 
-    <!-- (ج) واجهة الملف الشخصي للصحفي / الكاتب الموثق -->
-    <section id="view-author" class="view-section hidden">
-      <div class="author-profile-card glass-surface">
-        <button type="button" id="author-back-btn" class="back-pill-btn">
-          <span class="material-symbols-rounded" translate="no">arrow_forward</span>
-          <span id="ui-author-back-text">العودة للرئيسية</span>
-        </button>
+  // النقر على الشعار للعودة إلى الرئيسية
+  safeOn("home-brand-link", "click", (e) => {
+    e.preventDefault();
+    selectedCategory = "all";
+    selectedSubcategory = "all";
+    searchQuery = "";
+    const inp = $("global-search-input");
+    if (inp) inp.value = "";
+    $("search-drawer")?.classList.add("hidden");
+    window.history.pushState({}, "", "./");
+    renderCategoriesNav();
+    renderSidebarMenu();
+    renderSubcategoriesBar();
+    showView("view-home");
+    renderHomeFeed();
+  });
 
-        <div class="author-profile-header">
-          <img id="profile-author-avatar" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="صورة الكاتب" class="author-avatar-lg">
-          <div class="author-profile-info">
-            <div class="author-name-row">
-              <h1 id="profile-author-name" class="author-profile-name"></h1>
-              <span id="profile-author-verified" class="verified-badge hidden" translate="no" title="صحفي موثق">verified</span>
-            </div>
-            <span id="ui-author-badge" class="badge-pill">قلم في شبكة البوصلة</span>
-            <p id="profile-author-job" class="author-job-title"></p>
-            <p id="profile-author-bio" class="author-bio-text"></p>
-            <div class="author-stats-row">
-              <span id="profile-author-count" class="author-post-count"></span>
-              <div id="profile-author-socials" class="social-links-row"></div>
-            </div>
-          </div>
-        </div>
-      </div>
+  ["back-to-home-btn", "author-back-btn", "static-back-btn"].forEach((btnId) => {
+    safeOn(btnId, "click", () => {
+      window.history.pushState({}, "", "./");
+      applyIdentitySettings();
+      showView("view-home");
+      renderHomeFeed();
+    });
+  });
 
-      <div id="author-posts-grid" class="posts-grid" style="margin-top: 24px;"></div>
-    </section>
+  // شريط الهواتف الزجاجي السفلي
+  document.querySelectorAll(".mob-nav-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".mob-nav-btn").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      updateMobileNavPill();
 
-    <!-- (د) واجهة الصفحات القانونية الثابتة (من نحن / سياسة الخصوصية) -->
-    <section id="view-static" class="view-section hidden">
-      <div class="static-page-card glass-surface">
-        <div class="article-top-bar">
-          <button type="button" id="static-back-btn" class="back-pill-btn">
-            <span class="material-symbols-rounded" translate="no">arrow_forward</span>
-            <span id="ui-static-back-text">العودة للرئيسية</span>
-          </button>
-          <span id="static-page-badge" class="badge-pill">شبكة البوصلة</span>
-        </div>
-        <h1 id="static-page-title" class="article-main-title"></h1>
-        <div id="static-page-body" class="article-content-body"></div>
-      </div>
-    </section>
+      const action = btn.dataset.action;
+      if (action === "home") {
+        $("home-brand-link")?.click();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else if (action === "trending") {
+        showView("view-home");
+        document.querySelector(".trending-widget")?.scrollIntoView({ behavior: "smooth" });
+      } else if (action === "search") {
+        $("search-drawer")?.classList.remove("hidden");
+        $("global-search-input")?.focus();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else if (action === "theme") {
+        toggleTheme();
+      }
+    });
+  });
 
-  </main>
+  window.addEventListener("resize", updateMobileNavPill);
+  window.addEventListener("popstate", handleUrlRouting);
+}
 
-  <!-- 5. القائمة الجانبية المنزلقة (Sidebar Drawer) -->
-  <div id="sidebar-backdrop" class="sidebar-backdrop hidden"></div>
-  <aside id="sidebar-drawer" class="sidebar-drawer glass-surface" aria-label="القائمة الجانبية">
-    <div class="sidebar-header">
-      <img id="sidebar-logo-img" class="sidebar-logo" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="شعار القائمة" style="opacity:0;">
-      <button type="button" id="close-sidebar-btn" class="icon-btn sm-btn" aria-label="إغلاق القائمة">
-        <span class="material-symbols-rounded" translate="no">close</span>
+function initTheme() {
+  const saved = localStorage.getItem("bosla_theme") || "dark";
+  document.documentElement.setAttribute("data-theme", saved);
+  setText("theme-icon", saved === "dark" ? "light_mode" : "dark_mode");
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute("data-theme");
+  const next = current === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  localStorage.setItem("bosla_theme", next);
+  setText("theme-icon", next === "dark" ? "light_mode" : "dark_mode");
+}
+
+function updateMobileNavPill() {
+  const activeBtn = document.querySelector("#mobile-bottom-nav .mob-nav-btn.active");
+  const indicator = $("mob-nav-indicator");
+  if (!activeBtn || !indicator) return;
+  indicator.style.width = `${activeBtn.offsetWidth}px`;
+  indicator.style.transform = `translateX(${activeBtn.offsetLeft}px)`;
+}
+
+function openSidebarDrawer() {
+  $("sidebar-drawer")?.classList.add("open");
+  $("sidebar-backdrop")?.classList.remove("hidden");
+}
+
+function closeSidebarDrawer() {
+  $("sidebar-drawer")?.classList.remove("open");
+  $("sidebar-backdrop")?.classList.add("hidden");
+}
+
+// 6. جلب وتطبيق الهوية البصرية والشعار من غرفة العمليات حصرياً
+async function fetchSettings() {
+  try {
+    const snap = await getDoc(doc(db, "settings", "global"));
+    if (snap.exists()) {
+      const data = snap.data();
+      siteSettings = {
+        ...siteSettings,
+        ...data,
+        logoUrl: sanitizeUrl(data.logoUrl, ""),
+        faviconUrl: sanitizeUrl(data.faviconUrl || data.logoUrl, ""),
+        ogImageUrl: sanitizeUrl(data.ogImageUrl || data.faviconUrl || data.logoUrl, "")
+      };
+      try {
+        localStorage.setItem(SETTINGS_CACHE_KEY, JSON.stringify(siteSettings));
+      } catch (e) {}
+    }
+  } catch (err) {
+    console.warn("Settings fetch notice:", err);
+  }
+}
+
+function applyIdentitySettings() {
+  const activeLogo = sanitizeUrl(siteSettings.logoUrl, "");
+  const activeFavicon = sanitizeUrl(siteSettings.faviconUrl || activeLogo, "");
+  const activeOgImage = sanitizeUrl(siteSettings.ogImageUrl || activeFavicon, "");
+  const displaySiteName = siteSettings.siteName || "بوصلة السياسة اليمنية";
+  const displayNetName = siteSettings.networkName || "شبكة البوصلة";
+
+  document.title = `${displaySiteName} | ${displayNetName}`;
+  $("meta-desc")?.setAttribute("content", siteSettings.siteDesc || "");
+  $("og-title")?.setAttribute("content", `${displaySiteName} | ${displayNetName}`);
+  $("og-desc")?.setAttribute("content", siteSettings.siteDesc || "");
+
+  if (activeOgImage) {
+    $("og-image")?.setAttribute("content", activeOgImage);
+    $("twitter-image")?.setAttribute("content", activeOgImage);
+  }
+
+  if (activeFavicon) {
+    if ($("dynamic-favicon")) $("dynamic-favicon").href = activeFavicon;
+    if ($("apple-favicon")) $("apple-favicon").href = activeFavicon;
+  }
+
+  ["custom-logo-img", "sidebar-logo-img", "footer-logo-img"].forEach((id) => {
+    const img = $(id);
+    if (!img) return;
+    if (activeLogo) {
+      if (img.src !== activeLogo) img.src = activeLogo;
+      img.alt = displaySiteName;
+      img.style.opacity = "1";
+      img.classList.remove("hidden");
+    } else {
+      img.style.opacity = "0";
+      img.classList.add("hidden");
+    }
+  });
+
+  // إذا لم يكن هناك شعار مرفوع بعد، يظهر النص تلقائياً لئلا تبقى الترويسة فارغة
+  const shouldHideText = activeLogo ? (siteSettings.hideTextLogo !== false) : false;
+  $("brand-text-wrap")?.classList.toggle("hidden", shouldHideText);
+
+  setText("ui-site-name", displaySiteName);
+  setText("ui-network-name", displayNetName);
+  setText("footer-site-name", displaySiteName);
+  setText("footer-site-desc", siteSettings.siteDesc || "");
+  setHtml("ui-copyright-text", `© جميع الحقوق محفوظة — <b id="footer-network-copy">${escapeHTML(displayNetName)}</b>`);
+
+  if (siteSettings.accentColor && /^#[0-9A-Fa-f]{3,8}$/.test(siteSettings.accentColor.trim())) {
+    document.documentElement.style.setProperty("--accent", siteSettings.accentColor.trim());
+  }
+
+  const socialItems = [
+    { url: siteSettings.socialWhatsapp, label: "WhatsApp" },
+    { url: siteSettings.socialTelegram, label: "Telegram" },
+    { url: siteSettings.socialX, label: "X" },
+    { url: siteSettings.socialFacebook, label: "Facebook" }
+  ];
+
+  const linksHtml = socialItems
+    .map((item) => {
+      const safe = sanitizeUrl(item.url, "");
+      return safe ? `<a href="${escapeHTML(safe)}" target="_blank" rel="noopener" class="social-pill">${item.label}</a>` : "";
+    })
+    .filter(Boolean)
+    .join("");
+
+  setHtml("footer-social-links", linksHtml);
+  setHtml("sidebar-social-links", linksHtml);
+}
+
+// 7. جلب الأقسام وبناء شريط الأقسام والقائمة الجانبية
+async function fetchCategories() {
+  try {
+    const snap = await getDocs(collection(db, "categories"));
+    if (!snap.empty) {
+      const all = snap.docs
+        .map((d) => ({ id: d.id, ...d.data() }))
+        .sort((a, b) => (Number(a.order) || 99) - (Number(b.order) || 99));
+      const visibleList = all.filter((c) => c.visible !== false);
+      if (visibleList.length > 0) categories = visibleList;
+    }
+  } catch (err) {
+    console.warn("Categories fetch notice:", err);
+  }
+}
+
+function renderCategoriesNav() {
+  const nav = $("categories-nav-list");
+  if (!nav) return;
+
+  const itemsHtml = categories
+    .map((c) => `
+      <button type="button" class="cat-pill ${selectedCategory === c.slug ? "active" : ""}" data-cat="${escapeHTML(c.slug)}">
+        <span class="material-symbols-rounded" translate="no">${escapeHTML(c.icon || "newspaper")}</span>
+        <span>${escapeHTML(c.name)}</span>
       </button>
-    </div>
-    <ul id="sidebar-menu-list" class="sidebar-menu-list"></ul>
-    <div class="sidebar-footer">
-      <div id="sidebar-social-links" class="social-links-row"></div>
-    </div>
-  </aside>
+    `)
+    .join("");
 
-  <!-- 6. التذييل الرسمي (Footer) -->
-  <footer class="site-footer glass-surface">
-    <div class="container footer-inner">
-      <div class="footer-brand-col">
-        <img id="footer-logo-img" class="footer-logo" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="شعار التذييل" style="opacity:0;">
-        <h3 id="footer-site-name" class="footer-title">بوصلة السياسة اليمنية</h3>
-        <p id="footer-site-desc" class="footer-desc">منصة إخبارية وتحليلية ترصد كواليس السياسة والتقنية والثقافة</p>
-        <div id="footer-social-links" class="social-links-row"></div>
-      </div>
-
-      <div class="footer-links-col">
-        <div class="footer-legal-links">
-          <button type="button" id="ui-footer-about" class="footer-link-btn" onclick="window.openStaticPage('about')">من نحن</button>
-          <button type="button" id="ui-footer-privacy" class="footer-link-btn" onclick="window.openStaticPage('privacy')">سياسة الخصوصية</button>
-        </div>
-        <p id="ui-copyright-text" class="copyright-text">© جميع الحقوق محفوظة — <b id="footer-network-copy">شبكة البوصلة</b></p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- 7. شريط التنقل الزجاجي العائم للهواتف (Floating Glass Bottom Bar) -->
-  <nav id="mobile-bottom-nav" class="mobile-bottom-nav glass-surface" aria-label="التنقل السريع">
-    <div id="mob-nav-indicator" class="mob-nav-indicator"></div>
-    <button type="button" class="mob-nav-btn active" data-action="home">
+  nav.innerHTML = `
+    <button type="button" class="cat-pill ${selectedCategory === "all" ? "active" : ""}" data-cat="all">
       <span class="material-symbols-rounded" translate="no">home</span>
-      <span id="ui-mob-home">الرئيسية</span>
+      <span>الرئيسية</span>
     </button>
-    <button type="button" class="mob-nav-btn" data-action="trending">
-      <span class="material-symbols-rounded" translate="no">local_fire_department</span>
-      <span id="ui-mob-trending">الأكثر قراءة</span>
-    </button>
-    <button type="button" class="mob-nav-btn" data-action="search">
-      <span class="material-symbols-rounded" translate="no">search</span>
-      <span id="ui-mob-search">البحث</span>
-    </button>
-    <button type="button" class="mob-nav-btn" data-action="theme">
-      <span class="material-symbols-rounded" translate="no">contrast</span>
-      <span id="ui-mob-theme">المظهر</span>
-    </button>
-  </nav>
+    ${itemsHtml}
+  `;
 
-  <!-- 8. إشعار النظام المنبثق (Toast) -->
-  <div id="public-toast" class="public-toast hidden" role="status" aria-live="polite"></div>
+  nav.querySelectorAll(".cat-pill").forEach((btn) => {
+    btn.addEventListener("click", () => selectCategoryAndRender(btn.dataset.cat));
+  });
+}
 
-  <!-- 9. المحرك البرمجي للموقع العام -->
-  <script type="module" src="./app.js"></script>
-</body>
-</html>
+function renderSidebarMenu() {
+  const list = $("sidebar-menu-list");
+  if (!list) return;
+  const items = [];
+
+  if (siteSettings.showAboutMenu !== false) {
+    items.push(`
+      <li class="sidebar-menu-item">
+        <button type="button" class="sidebar-menu-btn" data-static-page="about">
+          <span>من نحن</span>
+          <span class="material-symbols-rounded" translate="no">info</span>
+        </button>
+      </li>
+    `);
+  }
+
+  categories.forEach((c) => {
+    items.push(`
+      <li class="sidebar-menu-item">
+        <button type="button" class="sidebar-menu-btn ${selectedCategory === c.slug ? "active" : ""}" data-side-cat="${escapeHTML(c.slug)}">
+          <span>${escapeHTML(c.name)}</span>
+          <span class="material-symbols-rounded" translate="no">${escapeHTML(c.icon || "chevron_left")}</span>
+        </button>
+      </li>
+    `);
+  });
+
+  if (siteSettings.showAboutMenu !== false) {
+    items.push(`
+      <li class="sidebar-menu-item">
+        <button type="button" class="sidebar-menu-btn" data-static-page="privacy">
+          <span>سياسة الخصوصية</span>
+          <span class="material-symbols-rounded" translate="no">verified_user</span>
+        </button>
+      </li>
+    `);
+  }
+
+  list.innerHTML = items.join("");
+
+  list.querySelectorAll("[data-side-cat]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      closeSidebarDrawer();
+      selectCategoryAndRender(btn.dataset.sideCat);
+    });
+  });
+
+  list.querySelectorAll("[data-static-page]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      closeSidebarDrawer();
+      window.openStaticPage(btn.dataset.staticPage);
+    });
+  });
+}
+
+function selectCategoryAndRender(catSlug) {
+  selectedCategory = catSlug || "all";
+  selectedSubcategory = "all";
+  renderCategoriesNav();
+  renderSidebarMenu();
+  showView("view-home");
+  window.history.pushState({}, "", "./");
+  renderSubcategoriesBar();
+  renderHomeFeed();
+}
+
+function renderSubcategoriesBar() {
+  const bar = $("subcategories-bar");
+  if (!bar) return;
+
+  if (selectedCategory === "all") {
+    bar.classList.add("hidden");
+    return;
+  }
+
+  const catObj = categories.find((c) => c.slug === selectedCategory);
+  const subs = Array.isArray(catObj?.subcategories) ? catObj.subcategories : [];
+  if (subs.length === 0) {
+    bar.classList.add("hidden");
+    return;
+  }
+
+  bar.classList.remove("hidden");
+  bar.innerHTML = `
+    <button type="button" class="sub-pill ${selectedSubcategory === "all" ? "active" : ""}" data-sub="all">الكل في ${escapeHTML(catObj.name)}</button>
+    ${subs.map((s) => `<button type="button" class="sub-pill ${selectedSubcategory === s ? "active" : ""}" data-sub="${escapeHTML(s)}">${escapeHTML(s)}</button>`).join("")}
+  `;
+
+  bar.querySelectorAll(".sub-pill").forEach((pill) => {
+    pill.addEventListener("click", () => {
+      selectedSubcategory = pill.dataset.sub;
+      renderSubcategoriesBar();
+      renderHomeFeed();
+    });
+  });
+}
 // ============================================================================
 // شبكة البوصلة الإخبارية — محرك الموقع العام (النسخة النهائية المؤمّنة) — الجزء (2/2)
 // ============================================================================
