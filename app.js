@@ -1,5 +1,5 @@
 // ============================================================================
-// شبكة البوصلة الإخبارية — محرك الموقع العام (النسخة النهائية المؤمّنة) — الجزء (1/2)
+// شبكة البوصلة الإخبارية — محرك الموقع العام (النسخة النهائية الكاملة في ملف واحد)
 // ============================================================================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
@@ -12,7 +12,7 @@ import {
   increment
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// 1. إعدادات الاتصال بقاعدة البيانات (قابلة للتخصيص ديناميكياً لنظام SaaS)
+// 1. إعدادات الاتصال بقاعدة البيانات (مع حماية ضد أي بيانات تالفة في الذاكرة)
 const DEFAULT_FIREBASE_CONFIG = {
   apiKey: "AIzaSyAd4Df_Fpp2GlGkRPyvmKuFW68LbL_a4yU",
   authDomain: "rawi-01.firebaseapp.com",
@@ -28,27 +28,45 @@ function getActiveFirebaseConfig() {
     const saved = localStorage.getItem("bosla_custom_firebase_config");
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (parsed && parsed.apiKey && parsed.projectId) return parsed;
+      if (
+        parsed &&
+        typeof parsed === "object" &&
+        typeof parsed.apiKey === "string" &&
+        parsed.apiKey.length > 10 &&
+        typeof parsed.projectId === "string" &&
+        parsed.projectId.length > 2
+      ) {
+        return parsed;
+      }
     }
   } catch (e) {
-    console.warn("Firebase config fallback active.");
+    console.warn("Using default Firebase configuration.");
   }
   return DEFAULT_FIREBASE_CONFIG;
 }
 
-const app = initializeApp(getActiveFirebaseConfig());
-const db = getFirestore(app);
+let app;
+let db;
+try {
+  app = initializeApp(getActiveFirebaseConfig());
+  db = getFirestore(app);
+} catch (err) {
+  app = initializeApp(DEFAULT_FIREBASE_CONFIG, "fallbackApp");
+  db = getFirestore(app);
+}
 
-// 2. ثوابت الكاش والأغلفة الزجاجية المدمجة برمجياً (بدون أي روابط خارجية)
-const SETTINGS_CACHE_KEY = "bosla_public_settings_final_v1";
+// 2. الثوابت والأغلفة الزجاجية المدمجة برمجياً (بدون أي روابط خارجية)
+const SETTINGS_CACHE_KEY = "bosla_public_settings_final_v3";
 const SESSION_VIEWS_KEY = "bosla_session_viewed_posts";
 const SESSION_ADS_KEY = "bosla_session_tracked_ads";
 
-const BLANK_SURFACE_SVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='360' viewBox='0 0 600 360'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%230f172a'/><stop offset='100%' stop-color='%231e293b'/></linearGradient></defs><rect width='100%' height='100%' fill='url(%23g)'/><circle cx='300' cy='180' r='42' fill='none' stroke='%233b82f6' stroke-width='2' stroke-opacity='0.35'/><polygon points='300,148 312,188 300,178 288,188' fill='%233b82f6' fill-opacity='0.5'/></svg>";
+const BLANK_SURFACE_SVG =
+  "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='360' viewBox='0 0 600 360'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%230f172a'/><stop offset='100%' stop-color='%231e293b'/></linearGradient></defs><rect width='100%' height='100%' fill='url(%23g)'/><circle cx='300' cy='180' r='42' fill='none' stroke='%233b82f6' stroke-width='2' stroke-opacity='0.35'/><polygon points='300,148 312,188 300,178 288,188' fill='%233b82f6' fill-opacity='0.5'/></svg>";
 
-const BLANK_AVATAR_SVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><rect width='100%' height='100%' rx='60' fill='%231e293b'/><circle cx='60' cy='45' r='22' fill='%23475569'/><path d='M24 106 C24 76 96 76 96 106' fill='%23475569'/></svg>";
+const BLANK_AVATAR_SVG =
+  "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><rect width='100%' height='100%' rx='60' fill='%231e293b'/><circle cx='60' cy='45' r='22' fill='%23475569'/><path d='M24 106 C24 76 96 76 96 106' fill='%23475569'/></svg>";
 
-// 3. درع الحماية الأمني وتعقيم المدخلات (XSS Protection) + دوال الـ DOM الآمنة
+// 3. دوال الحماية الأمنية والتعامل الآمن مع عناصر الصفحة
 const $ = (id) => document.getElementById(id);
 
 const safeOn = (id, event, handler) => {
@@ -90,11 +108,10 @@ function sanitizeUrl(url, fallback = "") {
   return fallback;
 }
 
-// إدارة سجل الجلسة لمنع تكرار احتساب المشاهدات الوهمية
 function hasSessionRecord(storageKey, itemId) {
   try {
     const list = JSON.parse(sessionStorage.getItem(storageKey) || "[]");
-    return list.includes(itemId);
+    return Array.isArray(list) && list.includes(itemId);
   } catch (e) {
     return false;
   }
@@ -103,14 +120,14 @@ function hasSessionRecord(storageKey, itemId) {
 function addSessionRecord(storageKey, itemId) {
   try {
     const list = JSON.parse(sessionStorage.getItem(storageKey) || "[]");
-    if (!list.includes(itemId)) {
+    if (Array.isArray(list) && !list.includes(itemId)) {
       list.push(itemId);
       sessionStorage.setItem(storageKey, JSON.stringify(list));
     }
   } catch (e) {}
 }
 
-// 4. الحالة المركزية للموقع والإعدادات الافتراضية النظيفة
+// 4. الحالة المركزية والأقسام الافتراضية
 const FALLBACK_CATEGORIES = [
   { name: "محلية", slug: "local", icon: "location_on", order: 1, visible: true, subcategories: ["السياسة اليمنية", "شؤون المحافظات"] },
   { name: "دولية", slug: "world", icon: "public", order: 2, visible: true, subcategories: ["الشرق الأوسط", "السياسة الدولية"] },
@@ -144,7 +161,6 @@ let siteSettings = {
   customAdLink: ""
 };
 
-// قراءة فورية للكاش في اللحظة صفر لمنع أي وميض للشعار
 try {
   const cached = localStorage.getItem(SETTINGS_CACHE_KEY);
   if (cached) {
@@ -162,104 +178,105 @@ let activeAds = [];
 let selectedCategory = "all";
 let selectedSubcategory = "all";
 let searchQuery = "";
-
 let breakingNewsList = [];
 let breakingCurrentIndex = 0;
 let breakingIntervalId = null;
 
-// 5. ربط الأحداث الفورية وتهيئة المظهر والشعار
+// 5. تفعيل جميع الأزرار والتفاعلات فوراً
 function bindImmediateUIEvents() {
-  initTheme();
-  applyIdentitySettings();
-  renderCategoriesNav();
-  renderSidebarMenu();
-  updateMobileNavPill();
-
-  safeOn("open-sidebar-btn", "click", openSidebarDrawer);
-  safeOn("close-sidebar-btn", "click", closeSidebarDrawer);
-  safeOn("sidebar-backdrop", "click", closeSidebarDrawer);
-  safeOn("theme-toggle-btn", "click", toggleTheme);
-
-  // البحث الذكي الفوري
-  safeOn("search-toggle-btn", "click", () => {
-    const drawer = $("search-drawer");
-    if (!drawer) return;
-    drawer.classList.toggle("hidden");
-    if (!drawer.classList.contains("hidden")) {
-      $("global-search-input")?.focus();
-    }
-  });
-
-  safeOn("close-search-btn", "click", () => {
-    $("search-drawer")?.classList.add("hidden");
-    searchQuery = "";
-    const inp = $("global-search-input");
-    if (inp) inp.value = "";
-    renderHomeFeed();
-  });
-
-  safeOn("global-search-input", "input", (e) => {
-    searchQuery = (e.target.value || "").trim();
-    showView("view-home");
-    renderHomeFeed();
-  });
-
-  // أزرار شريط العاجل الدوار
-  safeOn("breaking-next-btn", "click", () => stepBreakingNews(1));
-  safeOn("breaking-prev-btn", "click", () => stepBreakingNews(-1));
-
-  // النقر على الشعار للعودة إلى الرئيسية
-  safeOn("home-brand-link", "click", (e) => {
-    e.preventDefault();
-    selectedCategory = "all";
-    selectedSubcategory = "all";
-    searchQuery = "";
-    const inp = $("global-search-input");
-    if (inp) inp.value = "";
-    $("search-drawer")?.classList.add("hidden");
-    window.history.pushState({}, "", "./");
+  try {
+    $("lang-toggle-btn")?.remove();
+    $("translation-status-bar")?.remove();
+    initTheme();
+    applyIdentitySettings();
     renderCategoriesNav();
     renderSidebarMenu();
-    renderSubcategoriesBar();
-    showView("view-home");
-    renderHomeFeed();
-  });
+    updateMobileNavPill();
 
-  ["back-to-home-btn", "author-back-btn", "static-back-btn"].forEach((btnId) => {
-    safeOn(btnId, "click", () => {
-      window.history.pushState({}, "", "./");
-      applyIdentitySettings();
+    safeOn("open-sidebar-btn", "click", openSidebarDrawer);
+    safeOn("close-sidebar-btn", "click", closeSidebarDrawer);
+    safeOn("sidebar-backdrop", "click", closeSidebarDrawer);
+    safeOn("theme-toggle-btn", "click", toggleTheme);
+
+    safeOn("search-toggle-btn", "click", () => {
+      const drawer = $("search-drawer");
+      if (!drawer) return;
+      drawer.classList.toggle("hidden");
+      if (!drawer.classList.contains("hidden")) {
+        $("global-search-input")?.focus();
+      }
+    });
+
+    safeOn("close-search-btn", "click", () => {
+      $("search-drawer")?.classList.add("hidden");
+      searchQuery = "";
+      const inp = $("global-search-input");
+      if (inp) inp.value = "";
+      renderHomeFeed();
+    });
+
+    safeOn("global-search-input", "input", (e) => {
+      searchQuery = (e.target.value || "").trim();
       showView("view-home");
       renderHomeFeed();
     });
-  });
 
-  // شريط الهواتف الزجاجي السفلي
-  document.querySelectorAll(".mob-nav-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".mob-nav-btn").forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      updateMobileNavPill();
+    safeOn("breaking-next-btn", "click", () => stepBreakingNews(1));
+    safeOn("breaking-prev-btn", "click", () => stepBreakingNews(-1));
 
-      const action = btn.dataset.action;
-      if (action === "home") {
-        $("home-brand-link")?.click();
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      } else if (action === "trending") {
-        showView("view-home");
-        document.querySelector(".trending-widget")?.scrollIntoView({ behavior: "smooth" });
-      } else if (action === "search") {
-        $("search-drawer")?.classList.remove("hidden");
-        $("global-search-input")?.focus();
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      } else if (action === "theme") {
-        toggleTheme();
-      }
+    safeOn("home-brand-link", "click", (e) => {
+      e.preventDefault();
+      selectedCategory = "all";
+      selectedSubcategory = "all";
+      searchQuery = "";
+      const inp = $("global-search-input");
+      if (inp) inp.value = "";
+      $("search-drawer")?.classList.add("hidden");
+      window.history.pushState({}, "", "./");
+      renderCategoriesNav();
+      renderSidebarMenu();
+      renderSubcategoriesBar();
+      showView("view-home");
+      renderHomeFeed();
     });
-  });
 
-  window.addEventListener("resize", updateMobileNavPill);
-  window.addEventListener("popstate", handleUrlRouting);
+    ["back-to-home-btn", "author-back-btn", "static-back-btn"].forEach((btnId) => {
+      safeOn(btnId, "click", () => {
+        window.history.pushState({}, "", "./");
+        applyIdentitySettings();
+        showView("view-home");
+        renderHomeFeed();
+      });
+    });
+
+    document.querySelectorAll(".mob-nav-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".mob-nav-btn").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        updateMobileNavPill();
+
+        const action = btn.dataset.action;
+        if (action === "home") {
+          $("home-brand-link")?.click();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        } else if (action === "trending") {
+          showView("view-home");
+          document.querySelector(".trending-widget")?.scrollIntoView({ behavior: "smooth" });
+        } else if (action === "search") {
+          $("search-drawer")?.classList.remove("hidden");
+          $("global-search-input")?.focus();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        } else if (action === "theme") {
+          toggleTheme();
+        }
+      });
+    });
+
+    window.addEventListener("resize", updateMobileNavPill);
+    window.addEventListener("popstate", handleUrlRouting);
+  } catch (err) {
+    console.error("UI Binding Notice:", err);
+  }
 }
 
 function initTheme() {
@@ -294,7 +311,7 @@ function closeSidebarDrawer() {
   $("sidebar-backdrop")?.classList.add("hidden");
 }
 
-// 6. جلب وتطبيق الهوية البصرية والشعار من غرفة العمليات حصرياً
+// 6. جلب وتطبيق الهوية البصرية والشعار المعتمد من غرفة العمليات
 async function fetchSettings() {
   try {
     const snap = await getDoc(doc(db, "settings", "global"));
@@ -345,6 +362,7 @@ function applyIdentitySettings() {
       if (img.src !== activeLogo) img.src = activeLogo;
       img.alt = displaySiteName;
       img.style.opacity = "1";
+      img.style.visibility = "visible";
       img.classList.remove("hidden");
     } else {
       img.style.opacity = "0";
@@ -352,15 +370,17 @@ function applyIdentitySettings() {
     }
   });
 
-  // إذا لم يكن هناك شعار مرفوع بعد، يظهر النص تلقائياً لئلا تبقى الترويسة فارغة
-  const shouldHideText = activeLogo ? (siteSettings.hideTextLogo !== false) : false;
+  const shouldHideText = activeLogo ? siteSettings.hideTextLogo !== false : false;
   $("brand-text-wrap")?.classList.toggle("hidden", shouldHideText);
 
   setText("ui-site-name", displaySiteName);
   setText("ui-network-name", displayNetName);
   setText("footer-site-name", displaySiteName);
   setText("footer-site-desc", siteSettings.siteDesc || "");
-  setHtml("ui-copyright-text", `© جميع الحقوق محفوظة — <b id="footer-network-copy">${escapeHTML(displayNetName)}</b>`);
+  setHtml(
+    "ui-copyright-text",
+    `© جميع الحقوق محفوظة — <b id="footer-network-copy">${escapeHTML(displayNetName)}</b>`
+  );
 
   if (siteSettings.accentColor && /^#[0-9A-Fa-f]{3,8}$/.test(siteSettings.accentColor.trim())) {
     document.documentElement.style.setProperty("--accent", siteSettings.accentColor.trim());
@@ -376,7 +396,9 @@ function applyIdentitySettings() {
   const linksHtml = socialItems
     .map((item) => {
       const safe = sanitizeUrl(item.url, "");
-      return safe ? `<a href="${escapeHTML(safe)}" target="_blank" rel="noopener" class="social-pill">${item.label}</a>` : "";
+      return safe
+        ? `<a href="${escapeHTML(safe)}" target="_blank" rel="noopener" class="social-pill">${item.label}</a>`
+        : "";
     })
     .filter(Boolean)
     .join("");
@@ -385,7 +407,7 @@ function applyIdentitySettings() {
   setHtml("sidebar-social-links", linksHtml);
 }
 
-// 7. جلب الأقسام وبناء شريط الأقسام والقائمة الجانبية
+// 7. جلب الأقسام وبناء القوائم
 async function fetchCategories() {
   try {
     const snap = await getDocs(collection(db, "categories"));
@@ -406,12 +428,14 @@ function renderCategoriesNav() {
   if (!nav) return;
 
   const itemsHtml = categories
-    .map((c) => `
+    .map(
+      (c) => `
       <button type="button" class="cat-pill ${selectedCategory === c.slug ? "active" : ""}" data-cat="${escapeHTML(c.slug)}">
         <span class="material-symbols-rounded" translate="no">${escapeHTML(c.icon || "newspaper")}</span>
         <span>${escapeHTML(c.name)}</span>
       </button>
-    `)
+    `
+    )
     .join("");
 
   nav.innerHTML = `
@@ -523,9 +547,6 @@ function renderSubcategoriesBar() {
     });
   });
 }
-// ============================================================================
-// شبكة البوصلة الإخبارية — محرك الموقع العام (النسخة النهائية المؤمّنة) — الجزء (2/2)
-// ============================================================================
 
 // 8. جلب دليل الصحفيين والتوثيق (Staff Profiles & Verified Badges)
 async function fetchStaffDirectory() {
@@ -567,7 +588,7 @@ function getAuthorMeta(post) {
   return { verified, avatarUrl, bio, jobTitle, socialX, socialFb };
 }
 
-// 9. جلب وعرض الرعايات والإعلانات الذكية (مع حماية النقرات والظهور)
+// 9. جلب وعرض الرعايات والإعلانات الذكية
 async function fetchAds() {
   try {
     const snap = await getDocs(collection(db, "ads"));
@@ -681,14 +702,22 @@ function renderTopBannerAd() {
   }
 }
 
-// 10. جلب المنشورات + شريط الأخبار العاجلة الدوّار
+// 10. جلب المنشورات من قاعدة البيانات + شريط الأخبار العاجلة الدوّار
+function getTimestampSeconds(ts) {
+  if (!ts) return 0;
+  if (typeof ts.seconds === "number") return ts.seconds;
+  if (typeof ts === "number") return ts > 1e11 ? Math.floor(ts / 1000) : ts;
+  const parsed = Date.parse(ts);
+  return Number.isNaN(parsed) ? 0 : Math.floor(parsed / 1000);
+}
+
 async function fetchPublishedPosts() {
   try {
     const snap = await getDocs(collection(db, "posts"));
     publishedPosts = snap.docs
       .map((d) => ({ id: d.id, ...d.data() }))
-      .filter((p) => p.status === "published")
-      .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+      .filter((p) => !p.status || p.status === "published")
+      .sort((a, b) => getTimestampSeconds(b.createdAt) - getTimestampSeconds(a.createdAt));
 
     renderBreakingTicker();
     renderTrendingSidebar();
@@ -953,10 +982,11 @@ function renderTrendingSidebar() {
     .join("");
 }
 
-// 12. فتح قراءة المقال الكامل وتنسيق النصوص بأمان (Safe Markdown Parser)
+// 12. فتح قراءة المقال الكامل وتنسيق النصوص بأمان
 function extractYouTubeEmbedUrl(url) {
   if (!url || typeof url !== "string") return null;
-  const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
+  const regExp =
+    /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
   const match = url.match(regExp);
   return match && match[1] ? `https://www.youtube.com/embed/${match[1]}?rel=0` : null;
 }
@@ -968,7 +998,6 @@ function formatSafeParagraph(rawLine) {
 
   let safe = escapeHTML(trimmed);
 
-  // تحويل التنسيقات والروابط بعد تعقيم النص ضد حقن الأكواد
   safe = safe
     .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
     .replace(/\*(.*?)\*/g, "<em>$1</em>")
@@ -1155,7 +1184,7 @@ window.openArticle = async (postId, pushHistory = true) => {
   }
 };
 
-// 13. صفحة الملف الشخصي للكاتب / الصحفي الموثق (Author Profile View)
+// 13. صفحة الملف الشخصي للكاتب / الصحفي الموثق
 window.openAuthorProfile = async (authorName, authorEmail = "") => {
   const samplePost =
     publishedPosts.find(
@@ -1240,16 +1269,17 @@ window.openStaticPage = async (pageType) => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
 
-// 15. التوجيه، الإشعارات، والتشغيل الرئيسي المعزول ضد الأخطاء
+// 15. التوجيه، الإشعارات، والتشغيل الرئيسي المدرّع ضد التعليق
 function showView(viewId) {
   document.querySelectorAll(".view-section").forEach((v) => v.classList.add("hidden"));
   $(viewId)?.classList.remove("hidden");
 }
 
 function formatDate(ts) {
-  if (!ts || !ts.seconds) return "الآن";
+  const secs = getTimestampSeconds(ts);
+  if (!secs) return "الآن";
   try {
-    const d = new Date(ts.seconds * 1000);
+    const d = new Date(secs * 1000);
     return d.toLocaleDateString("ar-YE", {
       year: "numeric",
       month: "short",
@@ -1287,21 +1317,29 @@ async function handleUrlRouting() {
 async function initPublicSite() {
   bindImmediateUIEvents();
 
-  // استخدام allSettled يضمن استمرار الموقع حتى لو تأخر أحد الأقسام الفرعية
-  await Promise.allSettled([
-    fetchSettings(),
-    fetchCategories(),
-    fetchStaffDirectory(),
-    fetchAds(),
-    fetchPublishedPosts()
-  ]);
-
-  applyIdentitySettings();
-  renderCategoriesNav();
-  renderSidebarMenu();
-  renderTopBannerAd();
-  await handleUrlRouting();
-  setTimeout(updateMobileNavPill, 150);
+  try {
+    await Promise.allSettled([
+      fetchSettings(),
+      fetchCategories(),
+      fetchStaffDirectory(),
+      fetchAds(),
+      fetchPublishedPosts()
+    ]);
+  } catch (err) {
+    console.error("Initialization error:", err);
+  } finally {
+    $("loading-skeleton")?.remove();
+    applyIdentitySettings();
+    renderCategoriesNav();
+    renderSidebarMenu();
+    renderTopBannerAd();
+    await handleUrlRouting();
+    setTimeout(updateMobileNavPill, 150);
+  }
 }
 
-initPublicSite();
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initPublicSite);
+} else {
+  initPublicSite();
+}
