@@ -3,454 +3,1104 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title id="page-meta-title">حُجرية بريس | Hujariya Press</title>
-  <meta name="description" id="page-meta-desc" content="حُجرية بريس — منصة إخبارية وتحليلية شاملة تندرج تحت مظلة مؤسسة RAWI-YE.COM الإعلامية الرقمية.">
-  <meta name="theme-color" content="#ef3327" id="page-theme-color">
+  <title id="portal-meta-title">البوابة التحريرية الذكية | حُجرية بريس</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#ef3327" id="portal-theme-color">
 
-  <!-- إعدادات تثبيت تطبيق الويب (PWA) والأيقونات الديناميكية من الإعدادات -->
+  <!-- أيقونة تطبيق الويب لغرفة العمليات (تتحدث ديناميكياً من الإعدادات) -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="حُجرية بريس">
-  <link rel="icon" id="dynamic-favicon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23ef3327%22/><text x=%2250%%22 y=%2258%%22 font-size=%2264%22 fill=%22%23ffffff%22 font-family=%22Cairo,sans-serif%22 font-weight=%22900%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22>ح</text></svg>">
-  <link rel="apple-touch-icon" id="dynamic-apple-icon" href="">
+  <meta name="apple-mobile-web-app-title" content="تحرير حُجرية بريس">
+  <link rel="icon" id="portal-favicon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23ef3327%22/><text x=%2250%%22 y=%2258%%22 font-size=%2264%22 fill=%22%23ffffff%22 font-family=%22Cairo,sans-serif%22 font-weight=%22900%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22>ح</text></svg>">
+  <link rel="apple-touch-icon" id="portal-apple-icon" href="">
 
-  <!-- وسوم المشاركة الذكية (Open Graph) -->
-  <meta property="og:type" content="article">
-  <meta property="og:site_name" content="حُجرية بريس | Hujariya Press">
-  <meta property="og:title" id="og-meta-title" content="حُجرية بريس | Hujariya Press">
-  <meta property="og:description" id="og-meta-desc" content="منصة إخبارية وتحليلية شاملة تندرج تحت مظلة مؤسسة RAWI-YE.COM الإعلامية الرقمية.">
-  <meta property="og:image" id="og-meta-image" content="">
-  <meta property="og:url" id="og-meta-url" content="">
-  <meta name="twitter:card" content="summary_large_image">
-
-  <!-- الخطوط العربية الرسمية ومكتبة الأيقونات العالمية Google Material Symbols -->
+  <!-- الخطوط الرسمية ومكتبة الأيقونات العالمية Google Material Symbols -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@22,500,0,0" rel="stylesheet">
 
-  <!-- ملف المظهر الكلاسيكي النظيف (BBC Clean Style) -->
+  <!-- ملف المظهر الكلاسيكي النظيف للبوابة التحريرية الذكية -->
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
 
   <!-- =====================================================================
-       1. شريط الطقس العلوي النحيف (كافة المدن اليمنية + المدن السعودية المهمة)
+       1. شاشة تسجيل الدخول المستقلة ورمز الدخول السريع (4-Digit PIN)
        ===================================================================== -->
-  <div class="weather-top-strip" aria-label="حالة الطقس في اليمن والمملكة">
-    <div class="pub-container weather-strip-inner">
-      <div class="weather-strip-badge">
-        <span class="material-symbols-rounded" translate="no">partly_cloudy_day</span>
-        <span>الطقس:</span>
+  <section id="auth-gate-screen" class="auth-gate-screen">
+    <div class="auth-card">
+      <div class="auth-brand-banner">
+        <img id="auth-logo-img" src="" alt="حُجرية بريس" class="auth-logo-img hidden">
+        <h1 id="auth-site-name" class="auth-brand-title">حُجرية بريس</h1>
+        <span class="auth-portal-subtitle">البوابة التحريرية الذكية — غرفة العمليات</span>
       </div>
-      <div class="ticker-viewport">
-        <div id="regional-weather-track" class="continuous-ticker-track weather-speed">
-          <span>صنعاء 24°C</span><span class="t-sep">•</span>
-          <span>عدن 31°C</span><span class="t-sep">•</span>
-          <span>تعز 26°C</span><span class="t-sep">•</span>
-          <span>المكلا 29°C</span><span class="t-sep">•</span>
-          <span>مأرب 28°C</span><span class="t-sep">•</span>
-          <span>الرياض 30°C</span><span class="t-sep">•</span>
-          <span>مكة المكرمة 33°C</span><span class="t-sep">•</span>
-          <span>جدة 31°C</span>
+
+      <!-- (أ) نموذج الدخول القياسي: اسم المستخدم + كلمة المرور -->
+      <form id="standard-login-form" class="auth-body">
+        <div class="form-group">
+          <label for="login-username">اسم المستخدم أو المعرف الصحفي</label>
+          <div class="input-with-icon">
+            <span class="material-symbols-rounded" translate="no">person</span>
+            <input type="text" id="login-username" placeholder="أدخل اسم المستخدم..." autocomplete="username" required dir="ltr">
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- =====================================================================
-       2. الهيدر الكلاسيكي النظيف باللون الأحمر الفاتح (القائمة + الشعار + البحث)
-       ===================================================================== -->
-  <header class="bbc-clean-header" id="site-header-banner">
-    <div class="pub-container header-main-row">
+        <div class="form-group">
+          <label for="login-password">كلمة المرور</label>
+          <div class="input-with-icon">
+            <span class="material-symbols-rounded" translate="no">lock</span>
+            <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" required dir="ltr">
+            <button type="button" id="toggle-pass-visibility" class="icon-inside-btn" title="إظهار/إخفاء كلمة المرور">
+              <span class="material-symbols-rounded" translate="no">visibility</span>
+            </button>
+          </div>
+        </div>
 
-      <!-- يمين الهيدر: زر القائمة الجانبية الشاملة -->
-      <button type="button" id="open-master-sidebar-btn" class="header-menu-btn" aria-label="فتح القائمة الجانبية">
-        <span class="material-symbols-rounded" translate="no">menu</span>
-        <span class="menu-btn-label">القائمة</span>
-      </button>
+        <div class="trust-device-row">
+          <label class="checkbox-label">
+            <input type="checkbox" id="login-trust-device" checked>
+            <span>وثّق هذا الجهاز لتفعيل الدخول السريع برمز PIN (4 أرقام)</span>
+          </label>
+        </div>
 
-      <!-- وسط الهيدر: مكان الشعار أو الاسم النصي (يُدار بالكامل من الإعدادات) -->
-      <a href="#home" id="brand-home-link" class="header-brand-slot" aria-label="حُجرية بريس - الصفحة الرئيسية">
-        <img id="site-logo-img" src="" alt="حُجرية بريس" class="header-logo-img hidden">
-        <span id="site-text-brand" class="header-brand-text">حُجرية بريس</span>
-      </a>
+        <div id="login-error-box" class="alert-box alert-error hidden"></div>
 
-      <!-- يسار الهيدر: شريط البحث المدمج -->
-      <form id="public-search-form" class="header-search-form" role="search">
-        <span class="material-symbols-rounded search-icon" translate="no">search</span>
-        <input type="search" id="public-search-input" placeholder="ابحث في الأخبار..." aria-label="ابحث في الأخبار">
-        <button type="button" id="clear-search-btn" class="clear-search-btn hidden" title="مسح البحث">
-          <span class="material-symbols-rounded" translate="no">close</span>
+        <button type="submit" id="login-submit-btn" class="btn-primary-red full-width">
+          <span class="material-symbols-rounded" translate="no">login</span>
+          <span class="btn-text">دخول إلى غرفة العمليات</span>
         </button>
       </form>
 
-    </div>
-  </header>
-
-  <!-- =====================================================================
-       3. شريط مؤشرات الأسواق العالمية والعملات والطاقة (تحت الهيدر مباشرة)
-       ===================================================================== -->
-  <div class="markets- strip-bar" aria-label="مؤشرات الأسواق العالمية والعملات">
-    <div class="pub-container markets-strip-inner">
-      <div class="markets-strip-badge">
-        <span class="material-symbols-rounded" translate="no">monitoring</span>
-        <span>الأسواق:</span>
-      </div>
-      <div class="ticker-viewport">
-        <div id="global-markets-track" class="continuous-ticker-track markets-speed">
-          <span class="m-item">الذهب <strong dir="ltr">$2,745.40</strong> <em class="m-up">▲ +0.4%</em></span>
-          <span class="t-sep">|</span>
-          <span class="m-item">نفط برنت <strong dir="ltr">$74.80</strong> <em class="m-up">▲ +0.8%</em></span>
-          <span class="t-sep">|</span>
-          <span class="m-item">تاسي السعودي <strong dir="ltr">12,045</strong> <em class="m-up">▲ +0.3%</em></span>
-          <span class="t-sep">|</span>
-          <span class="m-item">داو جونز <strong dir="ltr">42,380</strong> <em class="m-up">▲ +0.2%</em></span>
+      <!-- (ب) شاشة الدخول السريع برمز PIN (4 أرقام) للأجهزة الموثوقة -->
+      <div id="pin-unlock-panel" class="auth-body hidden">
+        <div class="pin-user-welcome">
+          <img id="pin-user-avatar" src="" alt="" class="pin-avatar">
+          <div>
+            <span class="pin-welcome-hint">مرحباً بعودتك</span>
+            <strong id="pin-user-name" class="pin-user-name"></strong>
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- =====================================================================
-       4. شريط الأقسام الكلاسيكي النظيف (BBC Horizontal Tabs)
-       ===================================================================== -->
-  <nav class="bbc-categories-bar" aria-label="أقسام الموقع">
-    <div class="pub-container">
-      <div id="public-compasses-nav" class="categories-scroll-row">
-        <button type="button" class="cat-tab-btn active" data-compass-filter="all">الرئيسية</button>
-      </div>
-    </div>
-  </nav>
+        <p class="pin-instruction">أدخل رمز الدخول السريع (4 أرقام)</p>
 
-  <!-- شريط التصنيفات الفرعية (يظهر عند اختيار قسم معين) -->
-  <div id="subcategories-bar-wrap" class="subcategories-bar-wrap hidden">
-    <div class="pub-container">
-      <div id="public-subcategories-list" class="subcategories-scroll-row"></div>
-    </div>
-  </div>
+        <div class="pin-dots-row" id="pin-dots-display" dir="ltr">
+          <span class="pin-dot"></span>
+          <span class="pin-dot"></span>
+          <span class="pin-dot"></span>
+          <span class="pin-dot"></span>
+        </div>
 
-  <!-- =====================================================================
-       5. شريط الأخبار العاجلة التلفزيوني المتحرك (يمر بلا نهاية ولا يضخم الصفحة)
-       ===================================================================== -->
-  <section id="breaking-news-bar" class="tv-breaking-bar hidden" aria-label="أخبار عاجلة">
-    <div class="pub-container tv-breaking-inner">
-      <div class="tv-breaking-badge">
-        <span class="pulse-dot"></span>
-        <strong>عاجل</strong>
+        <div id="pin-error-box" class="alert-box alert-error hidden"></div>
+
+        <div class="pin-keypad" dir="ltr">
+          <button type="button" class="pin-key" data-pin-digit="1">1</button>
+          <button type="button" class="pin-key" data-pin-digit="2">2</button>
+          <button type="button" class="pin-key" data-pin-digit="3">3</button>
+          <button type="button" class="pin-key" data-pin-digit="4">4</button>
+          <button type="button" class="pin-key" data-pin-digit="5">5</button>
+          <button type="button" class="pin-key" data-pin-digit="6">6</button>
+          <button type="button" class="pin-key" data-pin-digit="7">7</button>
+          <button type="button" class="pin-key" data-pin-digit="8">8</button>
+          <button type="button" class="pin-key" data-pin-digit="9">9</button>
+          <button type="button" class="pin-key pin-key-action" id="pin-clear-btn" title="مسح">C</button>
+          <button type="button" class="pin-key" data-pin-digit="0">0</button>
+          <button type="button" class="pin-key pin-key-action" id="pin-backspace-btn" title="تراجع">⌫</button>
+        </div>
+
+        <button type="button" id="switch-to-password-btn" class="btn-link-muted full-width" style="margin-top:12px;">
+          الدخول بكلمة المرور أو تبديل الحساب
+        </button>
       </div>
-      <div class="ticker-viewport">
-        <div id="breaking-ticker-items" class="continuous-ticker-track breaking-speed"></div>
+
+      <div class="auth-footer">
+        <span>مؤسسة <strong>RAWI-YE.COM</strong> الإعلامية الرقمية</span>
       </div>
     </div>
   </section>
 
   <!-- =====================================================================
-       6. القائمة الجانبية الشاملة (تفتح صفحات الأقسام مباشرة بضغطة واحدة)
+       2. الواجهة الرئيسية للبوابة التحريرية الذكية (تظهر بعد تسجيل الدخول)
        ===================================================================== -->
-  <div id="master-sidebar-backdrop" class="sidebar-backdrop hidden"></div>
-  <aside id="master-sidebar-drawer" class="master-sidebar-drawer hidden" aria-label="القائمة الجانبية الشاملة">
-    <div class="sidebar-drawer-header">
-      <div class="sidebar-header-brand">
-        <img id="sidebar-logo-img" src="" alt="" class="sidebar-logo-img hidden">
-        <strong id="sidebar-brand-title" class="sidebar-brand-title">حُجرية بريس</strong>
-      </div>
-      <button type="button" id="close-master-sidebar-btn" class="sidebar-close-btn" aria-label="إغلاق القائمة">
-        <span class="material-symbols-rounded" translate="no">close</span>
-      </button>
-    </div>
+  <div id="portal-app-shell" class="portal-app-shell hidden">
 
-    <div class="sidebar-drawer-body">
-      <!-- انتقال مباشر للرئيسية والنبض السريع -->
-      <div class="sidebar-section-block">
-        <button type="button" id="sidebar-home-btn" class="sidebar-page-link active">
-          <span class="material-symbols-rounded" translate="no">home</span>
-          <span>الصفحة الرئيسية</span>
-        </button>
-        <button type="button" id="sidebar-pulse-page-btn" class="sidebar-page-link">
-          <span class="material-symbols-rounded" translate="no">bolt</span>
-          <span>صفحة الأخبار السريعة (النبض)</span>
-        </button>
-      </div>
+    <!-- الهيدر الكلاسيكي النظيف باللون الأحمر الفاتح الحاضن للشعار الأبيض -->
+    <header class="portal-header" id="portal-header-banner">
+      <div class="portal-container header-inner">
 
-      <!-- أقسام الموقع: الضغط على أي قسم يفتح صفحته مباشرة -->
-      <div class="sidebar-section-block">
-        <span class="sidebar-block-title">أقسام حُجرية بريس</span>
-        <div id="sidebar-categories-direct-list" class="sidebar-direct-grid"></div>
-      </div>
-
-      <!-- زاوية الكُتّاب ومقالات الرأي -->
-      <div id="sidebar-writers-block" class="sidebar-section-block hidden">
-        <span class="sidebar-block-title">أقلام وكُتّاب المنصة</span>
-        <div id="sidebar-writers-list" class="sidebar-writers-list"></div>
-      </div>
-
-      <!-- الصفحات المؤسسية الثابتة -->
-      <div class="sidebar-section-block">
-        <span class="sidebar-block-title">عن المنصة والمواثيق</span>
-        <div class="sidebar-pages-list">
-          <button type="button" class="sidebar-page-link" data-open-page="about">
-            <span class="material-symbols-rounded" translate="no">info</span>
-            <span>من نحن والتوجيه الوطني</span>
-          </button>
-          <button type="button" class="sidebar-page-link" data-open-page="charter">
-            <span class="material-symbols-rounded" translate="no">gavel</span>
-            <span>ميثاق الشرف الصحفي</span>
-          </button>
-          <button type="button" class="sidebar-page-link" data-open-page="privacy">
-            <span class="material-symbols-rounded" translate="no">verified_user</span>
-            <span>سياسة الخصوصية</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- منصات التواصل الاجتماعي (تظهر فقط المنصات المضاف لها رابط في الإعدادات) -->
-      <div id="sidebar-socials-wrap" class="sidebar-section-block hidden">
-        <span class="sidebar-block-title">تابعنا على منصات التواصل</span>
-        <div id="sidebar-social-links" class="sidebar-socials-grid"></div>
-      </div>
-    </div>
-
-    <div class="sidebar-drawer-footer">
-      <span>مؤسسة <strong>RAWI-YE.COM</strong> الإعلامية</span>
-      <span id="sidebar-domain-label" dir="ltr">hujariyapress.rawi-ye.com</span>
-    </div>
-  </aside>
-
-  <!-- =====================================================================
-       7. مساحة المحتوى الإخباري الرئيسية (واجهة BBC الكلاسيكية النظيفة)
-       ===================================================================== -->
-  <main class="pub-container main-workspace">
-
-    <!-- المساحة الإعلانية العلوية (تظهر فقط عند تفعيل إعلان) -->
-    <div id="ad-slot-top" class="ad-slot-container hidden"></div>
-
-    <!-- شريط عنوان القسم أو الفلتر المفتوح حالياً -->
-    <div id="active-filter-banner" class="active-filter-banner hidden">
-      <div class="filter-banner-info">
-        <span class="bbc-red-mark"></span>
-        <strong id="active-filter-title">نتائج العرض</strong>
-      </div>
-      <button type="button" id="reset-all-filters-btn" class="btn-clean-reset">
-        <span class="material-symbols-rounded" translate="no">arrow_forward</span>
-        <span>العودة للرئيسية</span>
-      </button>
-    </div>
-
-    <!-- =================================================================
-         (أ) واجهة الصفحة الرئيسية وصفحات الأقسام
-         ================================================================= -->
-    <div id="view-home" class="app-view">
-
-      <!-- التغطية الرئيسية البارزة (Hero Story) -->
-      <section id="hero-featured-section" class="hero-featured-section">
-        <div id="hero-featured-box" class="bbc-lead-story-slot">
-          <div class="skeleton-box hero-skeleton">جاري تحميل الخبر الرئيسي...</div>
-        </div>
-      </section>
-
-      <!-- شريط موجز الأخبار السريعة الأنيق والمدمج (مكان هادئ وغير مزعج) -->
-      <section id="quick-pulse-strip-section" class="quick-pulse-strip-section" aria-label="موجز الأخبار السريعة">
-        <div class="pulse-strip-header">
-          <div class="pulse-header-right">
-            <span class="material-symbols-rounded pulse-icon" translate="no">bolt</span>
-            <h2>موجز الأخبار السريعة</h2>
+        <!-- يمين: الشعار أو الاسم النصي (يتحدث من الإعدادات) -->
+        <div class="portal-brand-box">
+          <img id="header-logo-img" src="" alt="حُجرية بريس" class="header-logo-img hidden">
+          <div id="header-text-brand" class="header-text-brand">
+            <strong id="header-site-name" class="header-site-title">حُجرية بريس</strong>
+            <span class="header-portal-badge">البوابة التحريرية</span>
           </div>
-          <button type="button" id="view-all-pulse-btn" class="pulse-more-btn">عرض الكل</button>
-        </div>
-        <div id="quick-pulse-feed" class="pulse-horizontal-cards">
-          <div class="empty-state-msg">جاري تحميل الموجز...</div>
-        </div>
-      </section>
-
-      <!-- المساحة الإعلانية الوسطى -->
-      <div id="ad-slot-middle" class="ad-slot-container hidden"></div>
-
-      <!-- شبكة الأخبار والتقارير والتحليلات -->
-      <section class="bbc-news-section" aria-label="أحدث الأخبار والتقارير">
-        <div class="bbc-block-header">
-          <span class="bbc-red-mark"></span>
-          <h2 id="feed-section-heading">أحدث الأخبار والتقارير</h2>
-          <span id="feed-posts-counter" class="feed-count-text"></span>
         </div>
 
-        <div id="public-posts-grid" class="bbc-news-grid">
-          <div class="skeleton-box"></div>
-          <div class="skeleton-box"></div>
-          <div class="skeleton-box"></div>
-        </div>
+        <!-- يسار: معلومات المحرر السريعة + معاينة الموقع العام + قفل/خروج -->
+        <div class="header-user-actions">
+          <button type="button" id="header-profile-trigger" class="user-chip-btn" title="فتح ملفي الشخصي">
+            <img id="header-user-avatar" src="" alt="" class="user-chip-avatar">
+            <div class="user-chip-info">
+              <div class="user-chip-name-row">
+                <strong id="header-user-name"></strong>
+                <span id="header-user-verified" class="material-symbols-rounded verified-icon hidden" translate="no">verified</span>
+              </div>
+              <span id="header-user-role-label" class="user-chip-role"></span>
+            </div>
+          </button>
 
-        <div id="load-more-wrap" class="load-more-wrap hidden">
-          <button type="button" id="load-more-posts-btn" class="btn-load-more">
-            <span>عرض المزيد من الأخبار</span>
-            <span class="material-symbols-rounded" translate="no">expand_more</span>
+          <a href="https://hujariyapress.rawi-ye.com" target="_blank" rel="noopener" id="preview-public-site-link" class="header-icon-btn" title="فتح الموقع العام">
+            <span class="material-symbols-rounded" translate="no">open_in_new</span>
+            <span class="hide-sm">الموقع العام</span>
+          </a>
+
+          <button type="button" id="lock-pin-btn" class="header-icon-btn hidden" title="قفل الشاشة السريع برمز PIN">
+            <span class="material-symbols-rounded" translate="no">lock</span>
+          </button>
+
+          <button type="button" id="logout-portal-btn" class="header-icon-btn btn-danger-soft" title="تسجيل الخروج">
+            <span class="material-symbols-rounded" translate="no">logout</span>
           </button>
         </div>
-      </section>
 
-      <!-- زاوية كُتّاب وأقلام «حُجرية بريس» -->
-      <section id="writers-strip-section" class="bbc-writers-section hidden" aria-label="أقلام وكُتّاب حُجرية بريس">
-        <div class="bbc-block-header">
-          <span class="bbc-red-mark"></span>
-          <h2>أقلام وكُتّاب حُجرية بريس</h2>
-        </div>
-        <div id="writers-horizontal-list" class="writers-clean-row"></div>
-      </section>
+      </div>
+    </header>
 
-    </div>
+    <!-- شريط التنقل الرئيسي مع زر (+) الأوسط للإنشاء السريع -->
+    <nav class="portal-nav-bar" aria-label="أقسام غرفة العمليات">
+      <div class="portal-container nav-tabs-row">
 
-    <!-- =================================================================
-         (ب) واجهة قراءة الخبر الكامل (مع شريط التصنيفات المتحرك وزر المشاركة الذكي بالصورة)
-         ================================================================= -->
-    <article id="view-article" class="app-view hidden">
-      <div class="article-top-nav">
-        <button type="button" id="back-from-article-btn" class="btn-back-clean">
-          <span class="material-symbols-rounded" translate="no">arrow_forward</span>
-          <span>العودة للأخبار</span>
+        <button type="button" class="portal-nav-tab active" data-portal-tab="posts">
+          <span class="material-symbols-rounded" translate="no">newspaper</span>
+          <span>المنشورات والإحصائيات</span>
         </button>
 
-        <!-- شريط تصنيفات المقال الأفقي المتحرك (يتسع لأي عدد من التصنيفات بأناقة) -->
-        <div id="article-categories-badges" class="horizontal-tags-scroll"></div>
+        <button type="button" class="portal-nav-tab" data-portal-tab="notes">
+          <span class="material-symbols-rounded" translate="no">edit_note</span>
+          <span>دفتر الملاحظات</span>
+          <span id="notes-count-badge" class="nav-count-pill">0</span>
+        </button>
+
+        <!-- زر (+) الأوسط المميز لخيارات النشر السريع -->
+        <button type="button" id="center-plus-create-btn" class="center-plus-btn" title="إنشاء منشور أو فيديو أو ملاحظة جديدة">
+          <span class="material-symbols-rounded" translate="no">add</span>
+          <span>نشر جديد</span>
+        </button>
+
+        <button type="button" class="portal-nav-tab" data-portal-tab="profile">
+          <span class="material-symbols-rounded" translate="no">manage_accounts</span>
+          <span>ملفي الشخصي</span>
+        </button>
+
+        <!-- تبويبات الإدارة العليا (تظهر للأدمن الرئيسي أو من يُفوّضه فقط) -->
+        <button type="button" id="nav-tab-admin-staff" class="portal-nav-tab hidden" data-portal-tab="staff">
+          <span class="material-symbols-rounded" translate="no">shield_person</span>
+          <span>الكادر والمراجعات</span>
+          <span id="pending-reviews-badge" class="nav-count-pill pill-alert hidden">0</span>
+        </button>
+
+        <button type="button" id="nav-tab-admin-settings" class="portal-nav-tab hidden" data-portal-tab="settings">
+          <span class="material-symbols-rounded" translate="no">tune</span>
+          <span>إعدادات الموقع والهوية</span>
+        </button>
+
+      </div>
+    </nav>
+
+    <!-- ===================================================================
+         مساحة العمل المركزية (تتبدل تفاعلياً كالتطبيق)
+         =================================================================== -->
+    <main class="portal-container portal-workspace">
+
+      <!-- شريط تنبيه للكاتب إذا كان حسابه خاضعاً للمراجعة قبل النشر -->
+      <div id="writer-review-notice" class="notice-banner hidden">
+        <span class="material-symbols-rounded" translate="no">info</span>
+        <span>ملاحظة تحريرية: مقالاتك المنشورة تُحال تلقائياً لمراجعة الإدارة واعتمادها قبل ظهورها للجمهور.</span>
       </div>
 
-      <div class="bbc-article-sheet">
-        <h1 id="reader-article-title" class="article-main-headline"></h1>
+      <!-- =================================================================
+           التبويب 1: المنشورات وإحصائيات المشاهدات الدقيقة (للكاتب أو الأدمن)
+           ================================================================= -->
+      <section id="tab-view-posts" class="portal-tab-view">
 
-        <!-- الملخص الإخباري (الزبدة) -->
-        <p id="reader-article-summary" class="article-lead-summary hidden"></p>
-
-        <!-- شريط معلومات الكاتب والوقت + زر المشاركة الموحد الذي يشارك الصورة والملخص والرابط -->
-        <div class="article-byline-bar">
-          <div id="reader-author-box" class="byline-author-info" role="button" tabindex="0">
-            <img id="reader-author-avatar" src="" alt="" class="byline-avatar">
-            <div class="byline-text">
-              <div class="byline-name-row">
-                <strong id="reader-author-name"></strong>
-                <span id="reader-author-verified" class="material-symbols-rounded verified-icon hidden" translate="no">verified</span>
-              </div>
-              <time id="reader-publish-date" class="byline-time"></time>
+        <!-- شريط الإحصائيات العلوي: إجمالي المشاهدات الفعلية + عدد المقالات + الفيديوهات -->
+        <div class="stats-summary-grid">
+          <div class="stat-metric-card highlight-red-border">
+            <div class="stat-icon-box">
+              <span class="material-symbols-rounded" translate="no">visibility</span>
+            </div>
+            <div>
+              <span id="stat-views-label" class="stat-label">إجمالي مشاهدات منشوراتي</span>
+              <strong id="stat-total-views" class="stat-value">0</strong>
             </div>
           </div>
 
-          <button type="button" id="unified-share-btn" class="btn-unified-share" title="مشاركة الخبر مع الصورة والملخص والرابط">
-            <span class="material-symbols-rounded" translate="no">share</span>
-            <span id="unified-share-label">مشاركة</span>
-          </button>
-        </div>
-
-        <!-- صورة المقال البارزة (أو الصورة الافتراضية للهوية) -->
-        <figure id="reader-media-figure" class="article-main-figure"></figure>
-
-        <!-- فيديو يوتيوب المضمن إن وجد -->
-        <div id="reader-video-box" class="article-video-embed hidden"></div>
-
-        <!-- النص الكامل للخبر -->
-        <div id="reader-article-content" class="article-body-prose"></div>
-
-        <!-- شريط مشاركة سفلي موحد -->
-        <div class="article-bottom-share">
-          <span>شارك هذا الخبر مع الآخرين:</span>
-          <button type="button" id="unified-share-bottom-btn" class="btn-unified-share">
-            <span class="material-symbols-rounded" translate="no">share</span>
-            <span id="unified-share-bottom-label">مشاركة الخبر</span>
-          </button>
-        </div>
-
-        <!-- شريط الوسوم الأفقي المتحرك -->
-        <div id="reader-tags-box" class="horizontal-tags-scroll article-tags-margin hidden"></div>
-      </div>
-
-      <!-- أخبار وتقارير ذات صلة -->
-      <section class="bbc-news-section">
-        <div class="bbc-block-header">
-          <span class="bbc-red-mark"></span>
-          <h2>أخبار وتقارير ذات صلة</h2>
-        </div>
-        <div id="related-posts-grid" class="bbc-news-grid"></div>
-      </section>
-    </article>
-
-    <!-- =================================================================
-         (ج) واجهة صفحة الكاتب وأرشيف مقالاته
-         ================================================================= -->
-    <section id="view-author" class="app-view hidden">
-      <div class="article-top-nav">
-        <button type="button" id="back-from-author-btn" class="btn-back-clean">
-          <span class="material-symbols-rounded" translate="no">arrow_forward</span>
-          <span>العودة للرئيسية</span>
-        </button>
-      </div>
-
-      <div class="author-clean-header">
-        <img id="author-view-avatar" src="" alt="" class="author-clean-avatar">
-        <div class="author-clean-meta">
-          <div class="author-clean-name-row">
-            <h1 id="author-view-name"></h1>
-            <span id="author-view-verified" class="material-symbols-rounded verified-icon hidden" translate="no">verified</span>
+          <div class="stat-metric-card">
+            <div class="stat-icon-box">
+              <span class="material-symbols-rounded" translate="no">check_circle</span>
+            </div>
+            <div>
+              <span class="stat-label">المنشورات المعتمدة</span>
+              <strong id="stat-published-count" class="stat-value">0</strong>
+            </div>
           </div>
-          <span id="author-view-job" class="author-clean-role"></span>
-          <p id="author-view-bio" class="author-clean-bio"></p>
+
+          <div class="stat-metric-card">
+            <div class="stat-icon-box">
+              <span class="material-symbols-rounded" translate="no">hourglass_top</span>
+            </div>
+            <div>
+              <span class="stat-label">بانتظار المراجعة</span>
+              <strong id="stat-pending-count" class="stat-value">0</strong>
+            </div>
+          </div>
+
+          <div class="stat-metric-card">
+            <div class="stat-icon-box">
+              <span class="material-symbols-rounded" translate="no">smart_display</span>
+            </div>
+            <div>
+              <span class="stat-label">مواد الفيديو والريلز</span>
+              <strong id="stat-videos-count" class="stat-value">0</strong>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div class="bbc-block-header" style="margin-top: 22px;">
-        <span class="bbc-red-mark"></span>
-        <h2 id="author-articles-heading">مقالات الكاتب</h2>
-      </div>
-      <div id="author-posts-grid" class="bbc-news-grid"></div>
-    </section>
+        <!-- شريط أدوات البحث والفلترة في المنشورات -->
+        <div class="section-toolbar-card">
+          <div class="toolbar-search-box">
+            <span class="material-symbols-rounded" translate="no">search</span>
+            <input type="search" id="posts-search-input" placeholder="ابحث في عناوين المنشورات...">
+          </div>
 
-    <!-- =================================================================
-         (د) واجهة الصفحات المؤسسية الثابتة (من نحن، الميثاق، الخصوصية)
-         ================================================================= -->
-    <section id="view-static-page" class="app-view hidden">
-      <div class="article-top-nav">
-        <button type="button" id="back-from-static-btn" class="btn-back-clean">
-          <span class="material-symbols-rounded" translate="no">arrow_forward</span>
-          <span>العودة للرئيسية</span>
-        </button>
-      </div>
+          <div class="toolbar-filters-row">
+            <button type="button" class="filter-chip active" data-post-filter="all">الكل</button>
+            <button type="button" class="filter-chip" data-post-filter="published">منشور</button>
+            <button type="button" class="filter-chip" data-post-filter="pending">قيد المراجعة</button>
+            <button type="button" class="filter-chip" data-post-filter="breaking">عاجل</button>
+            <button type="button" class="filter-chip" data-post-filter="video">فيديو / قصير</button>
+          </div>
+        </div>
 
-      <div class="bbc-article-sheet">
-        <h1 id="static-page-title" class="article-main-headline"></h1>
-        <div id="static-page-body" class="article-body-prose"></div>
-      </div>
-    </section>
+        <!-- قائمة المنشورات (كل منشور يعرض مشاهداته الحقيقية على حدة) -->
+        <div id="portal-posts-list" class="portal-posts-list">
+          <div class="empty-workspace-card">
+            <span class="material-symbols-rounded empty-icon" translate="no">article</span>
+            <h3>لا توجد منشورات حتى الآن</h3>
+            <p>اضغط على زر (+ نشر جديد) للبدء بنشر أول مادة صحفية أو فيديو.</p>
+          </div>
+        </div>
 
-  </main>
+      </section>
+
+      <!-- =================================================================
+           التبويب 2: دفتر الملاحظات الشخصي المعزول (Personal Cloud Notebook)
+           ================================================================= -->
+      <section id="tab-view-notes" class="portal-tab-view hidden">
+        <div class="section-block-header">
+          <div>
+            <h2>دفتر الملاحظات والمسودات الشخصية</h2>
+            <p class="section-sub-desc">مساحة خاصة ومعزولة لك تماماً لحفظ أفكار المقالات، المصادر، والمسودات السريعة.</p>
+          </div>
+          <button type="button" id="new-note-trigger-btn" class="btn-primary-red">
+            <span class="material-symbols-rounded" translate="no">add</span>
+            <span>إضافة ملاحظة جديدة</span>
+          </button>
+        </div>
+
+        <!-- نموذج إضافة/تعديل ملاحظة -->
+        <form id="note-editor-card" class="clean-panel-card hidden" style="margin-bottom:16px;">
+          <input type="hidden" id="note-edit-id" value="">
+          <div class="form-group">
+            <label for="note-title-input">عنوان الفكرة أو الملاحظة</label>
+            <input type="text" id="note-title-input" placeholder="مثال: عناصر تقرير عن تطورات الملاحة في البحر الأحمر..." required>
+          </div>
+          <div class="form-group">
+            <label for="note-body-input">تفاصيل الملاحظة / المسودة</label>
+            <textarea id="note-body-input" rows="5" placeholder="اكتب نقاطك، مسودتك، أو الروابط المرجعية هنا..."></textarea>
+          </div>
+          <div class="form-actions-row">
+            <button type="submit" id="save-note-btn" class="btn-primary-red">
+              <span class="material-symbols-rounded" translate="no">save</span>
+              <span class="btn-text">حفظ الملاحظة</span>
+            </button>
+            <button type="button" id="cancel-note-btn" class="btn-outline">إلغاء</button>
+          </div>
+        </form>
+
+        <div id="personal-notes-grid" class="notes-grid"></div>
+      </section>
+
+      <!-- =================================================================
+           التبويب 3: ملفي الشخصي والأمان والتوثيق (داخل قوائم منسدلة أنيقة)
+           ================================================================= -->
+      <section id="tab-view-profile" class="portal-tab-view hidden">
+        <div class="section-block-header">
+          <div>
+            <h2>ملفي الشخصي والأمان والتوثيق</h2>
+            <p class="section-sub-desc">اضغط على أي قسم أدناه لفتحه وتعديل بياناتك بكل سهولة ودون ازدحام الشاشة.</p>
+          </div>
+        </div>
+
+        <!-- بطاقة ملخص الملف الشخصي العلوية -->
+        <div class="profile-summary-banner">
+          <img id="profile-banner-avatar" src="" alt="" class="profile-large-avatar">
+          <div class="profile-banner-info">
+            <div class="profile-banner-name-row">
+              <h3 id="profile-banner-name"></h3>
+              <span id="profile-banner-verified" class="material-symbols-rounded verified-icon hidden" translate="no" title="حساب موثق بالشارة الزرقاء">verified</span>
+            </div>
+            <span id="profile-banner-job" class="profile-job-badge"></span>
+            <p id="profile-banner-status-text" class="profile-status-hint"></p>
+          </div>
+        </div>
+
+        <!-- القائمة المنسدلة 1: الصورة الشخصية، الاسم، والنبذة التعريفية -->
+        <div class="acc-box">
+          <button type="button" class="acc-header open" data-acc-toggle="acc-profile-info">
+            <div class="acc-title">
+              <span class="material-symbols-rounded" translate="no">badge</span>
+              <strong>البيانات الشخصية، الصورة، وطلب تغيير الاسم</strong>
+            </div>
+            <span class="material-symbols-rounded acc-chevron" translate="no">expand_more</span>
+          </button>
+          <div id="acc-profile-info" class="acc-body">
+            <form id="profile-info-form">
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label for="prof-display-name">الاسم الصحفي الظاهر للقراء</label>
+                  <input type="text" id="prof-display-name" required>
+                  <small class="field-hint">ملاحظة للكتّاب: تغيير الاسم يُحال لمراجعة الإدارة للموافقة عليه.</small>
+                </div>
+
+                <div class="form-group">
+                  <label for="prof-job-title">المسمى المهني / الصفة الصحفية</label>
+                  <input type="text" id="prof-job-title" placeholder="مثال: كاتب ومحلل سياسي">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>الصورة الشخصية للكاتب</label>
+                <div class="upload-inline-row">
+                  <input type="url" id="prof-avatar-url" placeholder="رابط الصورة المباشر أو ارفع من جهازك..." dir="ltr">
+                  <label class="btn-outline upload-file-label">
+                    <span class="material-symbols-rounded" translate="no">upload</span>
+                    <span>رفع صورة</span>
+                    <input type="file" id="prof-avatar-file" accept="image/*" class="hidden">
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="prof-bio-text">النبذة التعريفية (تظهر في صفحتك بالموقع العام)</label>
+                <textarea id="prof-bio-text" rows="3" placeholder="نبذة مختصرة عن مسيرتك واهتماماتك الصحفية..."></textarea>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label for="prof-social-x">رابط حساب منصة X (اختياري)</label>
+                  <input type="url" id="prof-social-x" placeholder="https://x.com/..." dir="ltr">
+                </div>
+                <div class="form-group">
+                  <label for="prof-social-fb">رابط حساب فيسبوك (اختياري)</label>
+                  <input type="url" id="prof-social-fb" placeholder="https://facebook.com/..." dir="ltr">
+                </div>
+              </div>
+
+              <button type="submit" id="save-profile-info-btn" class="btn-primary-red">
+                <span class="material-symbols-rounded" translate="no">save</span>
+                <span class="btn-text">حفظ التعديلات الشخصية</span>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- القائمة المنسدلة 2: توثيق الحساب بالشارة الزرقاء ورفع الوثيقة -->
+        <div class="acc-box">
+          <button type="button" class="acc-header" data-acc-toggle="acc-profile-verification">
+            <div class="acc-title">
+              <span class="material-symbols-rounded" translate="no">verified</span>
+              <strong>توثيق الحساب بالشارة الزرقاء (رفع الوثيقة الصحفية / الهوية)</strong>
+            </div>
+            <span class="material-symbols-rounded acc-chevron" translate="no">expand_more</span>
+          </button>
+          <div id="acc-profile-verification" class="acc-body hidden">
+            <div id="verification-current-state" class="notice-banner" style="margin-bottom:14px;"></div>
+
+            <form id="verification-request-form">
+              <div class="form-group">
+                <label>إرفاق صورة الوثيقة (بطاقة صحفية أو إثبات هوية لمراجعة الإدارة فقط)</label>
+                <div class="upload-inline-row">
+                  <input type="url" id="ver-doc-url" placeholder="رابط صورة الوثيقة أو ارفعها من جهازك..." dir="ltr" required>
+                  <label class="btn-outline upload-file-label">
+                    <span class="material-symbols-rounded" translate="no">upload_file</span>
+                    <span>رفع الوثيقة</span>
+                    <input type="file" id="ver-doc-file" accept="image/*" class="hidden">
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="ver-request-note">ملاحظة لطلب التوثيق</label>
+                <input type="text" id="ver-request-note" placeholder="مثال: مرفق البطاقة الصحفية لاعتماد الشارة الزرقاء...">
+              </div>
+
+              <button type="submit" id="submit-ver-request-btn" class="btn-primary-red">
+                <span class="material-symbols-rounded" translate="no">send</span>
+                <span class="btn-text">إرسال طلب التوثيق للإدارة</span>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- القائمة المنسدلة 3: الأمان، تغيير كلمة المرور، ورمز الدخول السريع (PIN) -->
+        <div class="acc-box">
+          <button type="button" class="acc-header" data-acc-toggle="acc-profile-security">
+            <div class="acc-title">
+              <span class="material-symbols-rounded" translate="no">security</span>
+              <strong>الأمان، كلمة المرور، ورمز الدخول السريع (PIN)</strong>
+            </div>
+            <span class="material-symbols-rounded acc-chevron" translate="no">expand_more</span>
+          </button>
+          <div id="acc-profile-security" class="acc-body hidden">
+            <form id="security-settings-form">
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label for="sec-username-input">اسم المستخدم للدخول (Username)</label>
+                  <input type="text" id="sec-username-input" dir="ltr" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="sec-new-password">كلمة المرور الجديدة (اتركها فارغة إن لم ترد تغييرها)</label>
+                  <input type="password" id="sec-new-password" placeholder="أدخل كلمة مرور جديدة..." dir="ltr">
+                </div>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label for="sec-pin-code">رمز الدخول السريع (PIN مكون من 4 أرقام لهذا الجهاز)</label>
+                  <input type="text" id="sec-pin-code" maxlength="4" pattern="\d{4}" placeholder="مثال: 2580" dir="ltr">
+                </div>
+
+                <div class="form-group" style="display:flex;align-items:flex-end;">
+                  <button type="button" id="revoke-trusted-device-btn" class="btn-outline full-width">
+                    إلغاء توثيق هذا الجهاز ومسح رمز PIN
+                  </button>
+                </div>
+              </div>
+
+              <button type="submit" id="save-security-btn" class="btn-primary-red">
+                <span class="material-symbols-rounded" translate="no">lock_reset</span>
+                <span class="btn-text">حفظ إعدادات الأمان وكلمة المرور</span>
+              </button>
+            </form>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- =================================================================
+           التبويب 4: إدارة الكادر، الصلاحيات المرنة، والمراجعات (للأدمن فقط)
+           ================================================================= -->
+      <section id="tab-view-staff" class="portal-tab-view hidden">
+
+        <!-- (أ) صندوق المراجعات المعلقة: مقالات قيد المراجعة + طلبات التوثيق وتغيير الأسماء -->
+        <div class="acc-box">
+          <button type="button" class="acc-header open" data-acc-toggle="acc-admin-reviews">
+            <div class="acc-title">
+              <span class="material-symbols-rounded" translate="no">fact_check</span>
+              <strong>صندوق المراجعات والاعتماد (المقالات المعلقة وطلبات الكُتّاب)</strong>
+            </div>
+            <span class="material-symbols-rounded acc-chevron" translate="no">expand_more</span>
+          </button>
+          <div id="acc-admin-reviews" class="acc-body">
+            <div id="admin-pending-posts-box" style="margin-bottom:16px;"></div>
+            <div id="admin-staff-requests-box"></div>
+          </div>
+        </div>
+
+        <!-- (ب) إدارة الكادر الصحفي ومنح/سحب الصلاحيات والشارة الزرقاء -->
+        <div class="acc-box">
+          <button type="button" class="acc-header open" data-acc-toggle="acc-admin-staff-list">
+            <div class="acc-title">
+              <span class="material-symbols-rounded" translate="no">group</span>
+              <strong>إدارة الكادر الصحفي والصلاحيات الدقيقة والشارة الزرقاء</strong>
+            </div>
+            <span class="material-symbols-rounded acc-chevron" translate="no">expand_more</span>
+          </button>
+          <div id="acc-admin-staff-list" class="acc-body">
+            <div style="margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+              <p class="section-sub-desc">يمكنك إضافة كاتب جديد، منحه الشارة الزرقاء، تفعيل خيار (إحالة منشوراته للمراجعة)، أو تجميد صلاحياته مع بقاء أرشيفه وشارته.</p>
+              <button type="button" id="open-new-staff-form-btn" class="btn-primary-red">
+                <span class="material-symbols-rounded" translate="no">person_add</span>
+                <span>إضافة كاتب / عضو جديد</span>
+              </button>
+            </div>
+
+            <!-- نموذج إضافة أو تعديل صلاحيات كاتب -->
+            <form id="staff-editor-form" class="sub-panel-box hidden" style="margin-bottom:18px;">
+              <input type="hidden" id="staff-edit-id" value="">
+              <h3 id="staff-form-heading" style="margin-bottom:12px;">إضافة عضو جديد في الكادر</h3>
+
+              <div class="form-grid-3">
+                <div class="form-group">
+                  <label for="st-name">الاسم الصحفي الكامل</label>
+                  <input type="text" id="st-name" placeholder="الاسم الظاهر للقراء..." required>
+                </div>
+                <div class="form-group">
+                  <label for="st-username">اسم المستخدم للدخول (Username)</label>
+                  <input type="text" id="st-username" placeholder="مثال: writer1" dir="ltr" required>
+                </div>
+                <div class="form-group">
+                  <label for="st-password">كلمة المرور</label>
+                  <input type="text" id="st-password" placeholder="أدخل كلمة مرور..." dir="ltr" required>
+                </div>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label for="st-job-title">المسمى الوظيفي / الصفة</label>
+                  <input type="text" id="st-job-title" placeholder="مثال: محرر الشؤون السياسية">
+                </div>
+                <div class="form-group">
+                  <label for="st-role">نوع الدور العام</label>
+                  <select id="st-role">
+                    <option value="writer">كاتب / صحفي (معزول بمنشوراته فقط)</option>
+                    <option value="editor">محرر مفوض (حسب الصلاحيات أدناه)</option>
+                    <option value="admin">مدير تحرير</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- مصفوفة الصلاحيات الدقيقة والمرنة للكاتب -->
+              <div class="permissions-matrix-box">
+                <strong class="matrix-title">ضبط الصلاحيات الدقيقة لهذا العضو:</strong>
+                <div class="permissions-checks-grid">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="st-perm-verified">
+                    <span>منح الشارة الزرقاء الموثقة (Verified)</span>
+                  </label>
+
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="st-perm-require-review">
+                    <span>إحالة منشوراته للمراجعة قبل النشر (لا ينشر مباشرة)</span>
+                  </label>
+
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="st-perm-can-edit" checked>
+                    <span>السماح له بتعديل منشوراته بعد نشرها</span>
+                  </label>
+
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="st-perm-can-delete">
+                    <span>السماح له بحذف منشوراته</span>
+                  </label>
+
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="st-perm-manage-posts">
+                    <span>تفويضه بمراجعة واعتماد منشورات الكتّاب الآخرين</span>
+                  </label>
+
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="st-perm-manage-staff">
+                    <span>تفويضه بإدارة الكادر والأقسام</span>
+                  </label>
+
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="st-perm-suspended">
+                    <span style="color:#b91c1c;font-weight:800;">سحب صلاحية الدخول والنشر (مع بقاء اسمه وشارته في الموقع)</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-actions-row">
+                <button type="submit" id="save-staff-member-btn" class="btn-primary-red">
+                  <span class="material-symbols-rounded" translate="no">save</span>
+                  <span class="btn-text">حفظ بيانات وصلاحيات العضو</span>
+                </button>
+                <button type="button" id="cancel-staff-form-btn" class="btn-outline">إلغاء</button>
+              </div>
+            </form>
+
+            <div id="admin-staff-cards-grid" class="staff-cards-grid"></div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- =================================================================
+           التبويب 5: الإعدادات السيادية، الشعار والصور الـ 3، الألوان، والأقسام
+           ================================================================= -->
+      <section id="tab-view-settings" class="portal-tab-view hidden">
+
+        <form id="sovereign-settings-form">
+
+          <!-- 1. الهوية البصرية، اختيار اللون المرن، والصور الثلاث السيادية -->
+          <div class="acc-box">
+            <button type="button" class="acc-header open" data-acc-toggle="acc-set-branding">
+              <div class="acc-title">
+                <span class="material-symbols-rounded" translate="no">palette</span>
+                <strong>الهوية البصرية، الشعار الأبيض المفرغ، الصور الثلاث، وتغيير اللون المرن</strong>
+              </div>
+              <span class="material-symbols-rounded acc-chevron" translate="no">expand_more</span>
+            </button>
+            <div id="acc-set-branding" class="acc-body">
+
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label for="set-site-name">اسم المنصة الإخبارية</label>
+                  <input type="text" id="set-site-name" placeholder="حُجرية بريس" required>
+                </div>
+                <div class="form-group">
+                  <label for="set-site-desc">الوصف التعريفي للمنصة (لمحركات البحث والمشاركة)</label>
+                  <input type="text" id="set-site-desc" placeholder="منصة إخبارية وتحليلية شاملة...">
+                </div>
+              </div>
+
+              <!-- البنية التحتية المرنة لتغيير اللون الرئيسي للموقع والبانر -->
+              <div class="color-picker-infrastructure">
+                <label class="matrix-title">لون الهوية والبانر الرئيسي (اختر من الدائرة أو اكتب رقم اللون أو اختر لوناً جاهزاً):</label>
+                <div class="color-controls-row">
+                  <input type="color" id="set-accent-color-wheel" value="#ef3327" class="color-wheel-input" title="اختر اللون من الدائرة">
+                  <input type="text" id="set-accent-color-hex" value="#ef3327" class="color-hex-input" dir="ltr" placeholder="#ef3327">
+                  <div class="color-presets-list">
+                    <button type="button" class="color-swatch-btn" data-color-preset="#ef3327" style="background:#ef3327;" title="أحمر حُجرية بريس الفاتح"></button>
+                    <button type="button" class="color-swatch-btn" data-color-preset="#b80000" style="background:#b80000;" title="أحمر BBC الكلاسيكي"></button>
+                    <button type="button" class="color-swatch-btn" data-color-preset="#0f4c81" style="background:#0f4c81;" title="أزرق ملكي إخباري"></button>
+                    <button type="button" class="color-swatch-btn" data-color-preset="#047857" style="background:#047857;" title="أخضر زمردي"></button>
+                    <button type="button" class="color-swatch-btn" data-color-preset="#18181b" style="background:#18181b;" title="أسود فحمي رسمي"></button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- الصور الثلاث السيادية (1: الشعار + زر إخفاء الاسم، 2: صورة المشاركة الافتراضية، 3: أيقونة التطبيق) -->
+              <div class="three-brand-images-grid">
+
+                <!-- الصورة 1: شعار الموقع الأبيض المفرغ -->
+                <div class="brand-image-slot-card">
+                  <strong>1. شعار الموقع (الأبيض المفرغ للبانر الأحمر)</strong>
+                  <p>يظهر في الهيدر الرئيسي للموقع العام ولوحة التحكم.</p>
+                  <div class="upload-inline-row">
+                    <input type="url" id="set-logo-url" placeholder="رابط الشعار أو ارفعه..." dir="ltr">
+                    <label class="btn-outline upload-file-label">
+                      <span class="material-symbols-rounded" translate="no">upload</span>
+                      <span>رفع</span>
+                      <input type="file" id="set-logo-file" accept="image/*" class="hidden">
+                    </label>
+                  </div>
+                  <label class="checkbox-label" style="margin-top:8px;">
+                    <input type="checkbox" id="set-hide-site-name">
+                    <span>إخفاء الاسم النصي وإظهار الشعار المفرغ فقط</span>
+                  </label>
+                </div>
+
+                <!-- الصورة 2: صورة المشاركة الافتراضية (واتساب والمنشورات بدون صورة) -->
+                <div class="brand-image-slot-card">
+                  <strong>2. صورة المشاركة الافتراضية (واتساب والمنشورات)</strong>
+                  <p>تظهر تلقائياً عند مشاركة الموقع على واتساب أو لأي خبر بدون صورة مرفقة.</p>
+                  <div class="upload-inline-row">
+                    <input type="url" id="set-default-post-img" placeholder="رابط الصورة الافتراضية..." dir="ltr">
+                    <label class="btn-outline upload-file-label">
+                      <span class="material-symbols-rounded" translate="no">upload</span>
+                      <span>رفع</span>
+                      <input type="file" id="set-default-post-file" accept="image/*" class="hidden">
+                    </label>
+                  </div>
+                </div>
+
+                <!-- الصورة 3: أيقونة التطبيق ومحركات البحث (Favicon & PWA) -->
+                <div class="brand-image-slot-card">
+                  <strong>3. أيقونة التطبيق ومحركات البحث (Favicon)</strong>
+                  <p>تظهر في علامة تبويب المتصفح وعند تثبيت الموقع على الشاشة الرئيسية للجوال.</p>
+                  <div class="upload-inline-row">
+                    <input type="url" id="set-favicon-url" placeholder="رابط الأيقونة المربعة..." dir="ltr">
+                    <label class="btn-outline upload-file-label">
+                      <span class="material-symbols-rounded" translate="no">upload</span>
+                      <span>رفع</span>
+                      <input type="file" id="set-favicon-file" accept="image/*" class="hidden">
+                    </label>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- مفتاح رفع الصور (ImgBB API Key) -->
+              <div class="form-group" style="margin-top:14px;">
+                <label for="set-imgbb-key">مفتاح خدمة رفع الصور السحابي (ImgBB API Key — قابل للتحديث في أي وقت)</label>
+                <input type="text" id="set-imgbb-key" dir="ltr" placeholder="أدخل مفتاح رفع الصور...">
+              </div>
+
+            </div>
+          </div>
+
+          <!-- 2. روابط جميع منصات التواصل الاجتماعي (لا يظهر في الموقع إلا ما تضيف رابطه) -->
+          <div class="acc-box">
+            <button type="button" class="acc-header" data-acc-toggle="acc-set-socials">
+              <div class="acc-title">
+                <span class="material-symbols-rounded" translate="no">share</span>
+                <strong>روابط حسابات المنصة على مواقع التواصل (يظهر فقط ما تملؤه)</strong>
+              </div>
+              <span class="material-symbols-rounded acc-chevron" translate="no">expand_more</span>
+            </button>
+            <div id="acc-set-socials" class="acc-body hidden">
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label for="soc-whatsapp">قناة أو مجتمع واتساب</label>
+                  <input type="url" id="soc-whatsapp" dir="ltr" placeholder="https://whatsapp.com/channel/...">
+                </div>
+                <div class="form-group">
+                  <label for="soc-telegram">قناة تليجرام</label>
+                  <input type="url" id="soc-telegram" dir="ltr" placeholder="https://t.me/...">
+                </div>
+                <div class="form-group">
+                  <label for="soc-x">حساب منصة X (تويتر)</label>
+                  <input type="url" id="soc-x" dir="ltr" placeholder="https://x.com/...">
+                </div>
+                <div class="form-group">
+                  <label for="soc-facebook">صفحة فيسبوك</label>
+                  <input type="url" id="soc-facebook" dir="ltr" placeholder="https://facebook.com/...">
+                </div>
+                <div class="form-group">
+                  <label for="soc-youtube">قناة يوتيوب</label>
+                  <input type="url" id="soc-youtube" dir="ltr" placeholder="https://youtube.com/...">
+                </div>
+                <div class="form-group">
+                  <label for="soc-tiktok">حساب تيك توك (TikTok)</label>
+                  <input type="url" id="soc-tiktok" dir="ltr" placeholder="https://tiktok.com/@...">
+                </div>
+                <div class="form-group">
+                  <label for="soc-instagram">حساب إنستغرام</label>
+                  <input type="url" id="soc-instagram" dir="ltr" placeholder="https://instagram.com/...">
+                </div>
+                <div class="form-group">
+                  <label for="soc-threads">حساب ثريدز (Threads)</label>
+                  <input type="url" id="soc-threads" dir="ltr" placeholder="https://threads.net/@...">
+                </div>
+                <div class="form-group">
+                  <label for="soc-snapchat">حساب سناب شات</label>
+                  <input type="url" id="soc-snapchat" dir="ltr" placeholder="https://snapchat.com/add/...">
+                </div>
+                <div class="form-group">
+                  <label for="soc-linkedin">صفحة لينكدإن</label>
+                  <input type="url" id="soc-linkedin" dir="ltr" placeholder="https://linkedin.com/...">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. النصوص المؤسسية (من نحن، ميثاق الشرف، سياسة الخصوصية) -->
+          <div class="acc-box">
+            <button type="button" class="acc-header" data-acc-toggle="acc-set-pages">
+              <div class="acc-title">
+                <span class="material-symbols-rounded" translate="no">policy</span>
+                <strong>تحرير الصفحات المؤسسية (من نحن، ميثاق الشرف، الخصوصية)</strong>
+              </div>
+              <span class="material-symbols-rounded acc-chevron" translate="no">expand_more</span>
+            </button>
+            <div id="acc-set-pages" class="acc-body hidden">
+              <div class="form-group">
+                <label for="set-about-html">صفحة «من نحن والتوجيه الوطني»</label>
+                <textarea id="set-about-html" rows="5"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="set-charter-html">صفحة «ميثاق الشرف الصحفي»</label>
+                <textarea id="set-charter-html" rows="4"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="set-privacy-html">صفحة «سياسة الخصوصية»</label>
+                <textarea id="set-privacy-html" rows="4"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin: 16px 0 24px;">
+            <button type="submit" id="save-sovereign-settings-btn" class="btn-primary-red lg-btn">
+              <span class="material-symbols-rounded" translate="no">save</span>
+              <span class="btn-text">حفظ جميع إعدادات الموقع والهوية البصرية</span>
+            </button>
+          </div>
+
+        </form>
+
+        <!-- 4. إدارة أقسام الموقع وتفرعاتها -->
+        <div class="acc-box">
+          <button type="button" class="acc-header" data-acc-toggle="acc-set-categories">
+            <div class="acc-title">
+              <span class="material-symbols-rounded" translate="no">category</span>
+              <strong>إدارة أقسام الموقع والتصنيفات الفرعية</strong>
+            </div>
+            <span class="material-symbols-rounded acc-chevron" translate="no">expand_more</span>
+          </button>
+          <div id="acc-set-categories" class="acc-body hidden">
+            <form id="category-manager-form" class="sub-panel-box" style="margin-bottom:14px;">
+              <input type="hidden" id="cat-edit-id" value="">
+              <div class="form-grid-3">
+                <div class="form-group">
+                  <label for="cat-name-input">اسم القسم الرئيسي</label>
+                  <input type="text" id="cat-name-input" placeholder="مثال: الرياضة" required>
+                </div>
+                <div class="form-group">
+                  <label for="cat-subs-input">التصنيفات الفرعية (افصل بينها بفاصلة ،)</label>
+                  <input type="text" id="cat-subs-input" placeholder="الكرة اليمنية، الدوري السعودي، عالمية">
+                </div>
+                <div class="form-group">
+                  <label for="cat-order-input">ترتيب الظهور</label>
+                  <input type="number" id="cat-order-input" value="1" min="1">
+                </div>
+              </div>
+              <button type="submit" id="save-category-btn" class="btn-primary-red">
+                <span class="material-symbols-rounded" translate="no">add</span>
+                <span class="btn-text">حفظ القسم</span>
+              </button>
+            </form>
+            <div id="admin-categories-list" class="staff-cards-grid"></div>
+          </div>
+        </div>
+
+        <!-- 5. إدارة المساحات الإعلانية -->
+        <div class="acc-box">
+          <button type="button" class="acc-header" data-acc-toggle="acc-set-ads">
+            <div class="acc-title">
+              <span class="material-symbols-rounded" translate="no">campaign</span>
+              <strong>إدارة المساحات الإعلانية في الموقع العام</strong>
+            </div>
+            <span class="material-symbols-rounded acc-chevron" translate="no">expand_more</span>
+          </button>
+          <div id="acc-set-ads" class="acc-body hidden">
+            <form id="ad-manager-form" class="sub-panel-box" style="margin-bottom:14px;">
+              <div class="form-grid-3">
+                <div class="form-group">
+                  <label for="ad-title-input">عنوان الإعلان</label>
+                  <input type="text" id="ad-title-input" required>
+                </div>
+                <div class="form-group">
+                  <label for="ad-sponsor-input">اسم الجهة المعلنة</label>
+                  <input type="text" id="ad-sponsor-input" placeholder="شركاء حُجرية بريس">
+                </div>
+                <div class="form-group">
+                  <label for="ad-target-url">رابط الانتقال عند الضغط</label>
+                  <input type="url" id="ad-target-url" dir="ltr" placeholder="https://...">
+                </div>
+              </div>
+              <div class="form-group">
+                <label>صورة البانر الإعلاني</label>
+                <div class="upload-inline-row">
+                  <input type="url" id="ad-image-url" dir="ltr" placeholder="رابط صورة الإعلان أو ارفعها...">
+                  <label class="btn-outline upload-file-label">
+                    <span class="material-symbols-rounded" translate="no">upload</span>
+                    <span>رفع بانر</span>
+                    <input type="file" id="ad-image-file" accept="image/*" class="hidden">
+                  </label>
+                </div>
+              </div>
+              <button type="submit" id="save-ad-btn" class="btn-primary-red">
+                <span class="material-symbols-rounded" translate="no">add_Photo_alternate</span>
+                <span class="btn-text">إضافة الإعلان</span>
+              </button>
+            </form>
+            <div id="admin-ads-list" class="staff-cards-grid"></div>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
 
   <!-- =====================================================================
-       8. التذييل المؤسسي النظيف (Footer)
+       3. نافذة خيارات زر (+) الأوسط للإنشاء السريع (Quick Action Sheet)
        ===================================================================== -->
-  <footer class="bbc-clean-footer">
-    <div class="pub-container">
-      <div class="footer-top-row">
-        <div class="footer-brand-info">
-          <img id="footer-logo-img" src="" alt="حُجرية بريس" class="footer-logo-img hidden">
-          <strong id="footer-site-name" class="footer-title">حُجرية بريس</strong>
-          <p id="footer-site-desc" class="footer-desc">
-            منصة إخبارية وتحليلية شاملة تندرج تحت مظلة مؤسسة RAWI-YE.COM الإعلامية الرقمية.
-          </p>
-          <div id="footer-social-links" class="footer-socials-row"></div>
-        </div>
-
-        <div class="footer-quick-links">
-          <button type="button" class="footer-link-btn" data-open-page="about">من نحن</button>
-          <button type="button" class="footer-link-btn" data-open-page="charter">ميثاق الشرف</button>
-          <button type="button" class="footer-link-btn" data-open-page="privacy">سياسة الخصوصية</button>
-        </div>
+  <div id="plus-quick-modal" class="modal-backdrop hidden">
+    <div class="plus-choice-sheet">
+      <div class="modal-sheet-header">
+        <strong>ماذا تريد أن تنشر أو تدوّن الآن؟</strong>
+        <button type="button" id="close-plus-modal-btn" class="icon-close-btn">
+          <span class="material-symbols-rounded" translate="no">close</span>
+        </button>
       </div>
+      <div class="plus-choices-grid">
+        <button type="button" class="plus-choice-card" data-create-mode="standard">
+          <span class="material-symbols-rounded" translate="no">newspaper</span>
+          <strong>خبر أو تقرير شامل</strong>
+          <small>مقال كامل مع صورة وتصنيفات متعددة</small>
+        </button>
 
-      <div class="footer-bottom-row">
-        <span>© جميع الحقوق محفوظة لـ <strong id="copyright-site-name">حُجرية بريس</strong> — مؤسسة <strong>RAWI-YE.COM</strong></span>
-        <span id="footer-domain-label" dir="ltr">hujariyapress.rawi-ye.com</span>
+        <button type="button" class="plus-choice-card" data-create-mode="quick-breaking">
+          <span class="material-symbols-rounded" translate="no">bolt</span>
+          <strong>خبر عاجل / نبض سريع</strong>
+          <small>نشر فوري لشريط العاجل والموجز</small>
+        </button>
+
+        <button type="button" class="plus-choice-card" data-create-mode="short-video">
+          <span class="material-symbols-rounded" translate="no">smartphone</span>
+          <strong>فيديو قصير (BBC Shorts / Reels)</strong>
+          <small>فيديو عمودي قصير 9:16 بطابع تيك توك وبي بي سي</small>
+        </button>
+
+        <button type="button" class="plus-choice-card" data-create-mode="landscape-video">
+          <span class="material-symbols-rounded" translate="no">smart_display</span>
+          <strong>فيديو يوتيوب عريض</strong>
+          <small>تقرير مرئي أو تغطية فيديو 16:9</small>
+        </button>
+
+        <button type="button" class="plus-choice-card" data-create-mode="note">
+          <span class="material-symbols-rounded" translate="no">edit_note</span>
+          <strong>فكرة في دفتر الملاحظات</strong>
+          <small>تدوين مسودة خاصة في دفترك المعزول</small>
+        </button>
       </div>
     </div>
-  </footer>
+  </div>
 
-  <!-- إشعار التفاعل السريع (Toast) -->
-  <div id="pub-toast" class="pub-toast hidden" role="status" aria-live="polite"></div>
+  <!-- =====================================================================
+       4. محرر الأخبار والفيديوهات الذكي الشامل (Smart Article & Video Editor)
+       ===================================================================== -->
+  <div id="article-editor-modal" class="modal-backdrop hidden">
+    <div class="editor-modal-card">
+      <div class="modal-sheet-header">
+        <strong id="editor-modal-title">إنشاء مادة صحفية جديدة</strong>
+        <button type="button" id="close-article-editor-btn" class="icon-close-btn">
+          <span class="material-symbols-rounded" translate="no">close</span>
+        </button>
+      </div>
 
-  <!-- المحرك البرمجي للموقع العام (حُجرية بريس) -->
+      <form id="smart-post-form" class="editor-modal-body">
+        <input type="hidden" id="post-edit-id" value="">
+
+        <!-- العنوان الرئيسي -->
+        <div class="form-group">
+          <label for="post-title-input">عنوان الخبر أو التقرير أو الفيديو</label>
+          <input type="text" id="post-title-input" placeholder="اكتب عنواناً صحفياً واضحاً وجذاباً..." required>
+        </div>
+
+        <!-- الملخص الإخباري (الزبدة التي تظهر في البطاقة وعند المشاركة) -->
+        <div class="form-group">
+          <label for="post-summary-input">الملخص الإخباري (الزبدة — يظهر في البطاقات وعند المشاركة)</label>
+          <textarea id="post-summary-input" rows="2" placeholder="سطر أو سطران يلخصان أهم ما في الخبر..."></textarea>
+        </div>
+
+        <!-- اختيار التصنيفات المتعددة (حتى لو 10 مسميات تظهر مرتبة أفقياً) -->
+        <div class="form-group">
+          <label>الأقسام والتصنيفات (يمكنك اختيار قسم واحد أو عدة أقسام معاً)</label>
+          <div id="editor-categories-chips" class="horizontal-chips-selector"></div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="post-subcategory-select">التصنيف الفرعي الدقيق</label>
+            <select id="post-subcategory-select">
+              <option value="">— اختر أو اتركه عاماً —</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="post-tags-input">الوسوم والهاشتاجات (افصل بفاصلة ،)</label>
+            <input type="text" id="post-tags-input" placeholder="اليمن، السعودية، اقتصاد، عاجل">
+          </div>
+        </div>
+
+        <!-- الصورة البارزة للمقال -->
+        <div class="form-group">
+          <label>الصورة البارزة (إذا تُركت فارغة ستظهر صورة هوية حُجرية بريس الافتراضية تلقائياً)</label>
+          <div class="upload-inline-row">
+            <input type="url" id="post-image-url" dir="ltr" placeholder="رابط الصورة أو ارفعها من جهازك...">
+            <label class="btn-outline upload-file-label" id="post-image-upload-label">
+              <span class="material-symbols-rounded" translate="no">add_photo_alternate</span>
+              <span id="post-image-upload-text">رفع صورة</span>
+              <input type="file" id="post-image-file" accept="image/*" class="hidden">
+            </label>
+          </div>
+          <div id="post-image-preview-box" class="image-preview-mini hidden">
+            <img id="post-image-preview-img" src="" alt="معاينة">
+            <button type="button" id="clear-post-image-btn" class="btn-link-muted">إزالة الصورة</button>
+          </div>
+        </div>
+
+        <!-- البنية التحتية المتكاملة للفيديوهات القصيرة (BBC/TikTok Style) وفيديوهات يوتيوب العريضة -->
+        <div class="video-infrastructure-box">
+          <div class="video-box-header">
+            <span class="material-symbols-rounded" translate="no">videocam</span>
+            <strong>تضمين الفيديو (يدعم الفيديوهات القصيرة Shorts/Reels وفيديوهات يوتيوب العريضة)</strong>
+          </div>
+          <div class="form-grid-3" style="margin-top:8px;">
+            <div class="form-group">
+              <label for="post-video-type">نمط عرض الفيديو</label>
+              <select id="post-video-type">
+                <option value="none">بدون فيديو (مقال نصي / مصور)</option>
+                <option value="short_vertical">فيديو قصير عمودي 9:16 (طراز BBC Shorts / TikTok)</option>
+                <option value="landscape">فيديو عريض 16:9 (يوتيوب قياسي / تقرير مرئي)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="post-video-url">رابط الفيديو (YouTube / Shorts / MP4)</label>
+              <input type="url" id="post-video-url" dir="ltr" placeholder="https://youtube.com/shorts/... أو watch?v=...">
+            </div>
+            <div class="form-group">
+              <label for="post-video-duration">مدة الفيديو (اختياري)</label>
+              <input type="text" id="post-video-duration" dir="ltr" placeholder="0:55">
+            </div>
+          </div>
+        </div>
+
+        <!-- محرر النص الصحفي المنسق -->
+        <div class="form-group">
+          <label>نص الخبر أو التفاصيل الكاملة</label>
+          <div class="rich-editor-toolbar">
+            <button type="button" data-rich-cmd="bold" title="خط عريض"><strong>B</strong></button>
+            <button type="button" data-rich-cmd="h2" title="عنوان فرعي كبير">H2</button>
+            <button type="button" data-rich-cmd="h3" title="عنوان فرعي متوسط">H3</button>
+            <button type="button" data-rich-cmd="blockquote" title="اقتباس صحفي">❝ اقتباس</button>
+            <button type="button" data-rich-cmd="insertUnorderedList" title="قائمة نقطية">• قائمة</button>
+            <button type="button" data-rich-cmd="removeFormat" title="مسح التنسيق">تنظيف النص</button>
+          </div>
+          <div id="post-rich-content" class="rich-editor-area" contenteditable="true" data-placeholder="اكتب تفاصيل الخبر أو التقرير هنا..."></div>
+        </div>
+
+        <!-- خيارات البث والتمييز (العاجل الموقوت، النبض السريع، الخبر الرئيسي) -->
+        <div class="publishing-flags-box">
+          <label class="checkbox-label">
+            <input type="checkbox" id="post-flag-featured">
+            <span>تثبيت كخبر رئيسي أول في الواجهة (Hero)</span>
+          </label>
+
+          <label class="checkbox-label">
+            <input type="checkbox" id="post-flag-quick">
+            <span>إدراج في «موجز الأخبار السريعة (النبض)»</span>
+          </label>
+
+          <label class="checkbox-label">
+            <input type="checkbox" id="post-flag-breaking">
+            <span style="color:#b91c1c;font-weight:800;">بث في شريط الأخبار العاجلة التلفزيوني المتحرك</span>
+          </label>
+
+          <div id="breaking-duration-wrap" class="breaking-duration-wrap hidden">
+            <label for="post-breaking-hours">مدة بقاء الخبر في شريط العاجل:</label>
+            <select id="post-breaking-hours">
+              <option value="1">ساعة واحدة</option>
+              <option value="3">3 ساعات</option>
+              <option value="6" selected>6 ساعات</option>
+              <option value="12">12 ساعة</option>
+              <option value="24">24 ساعة</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="editor-submit-bar">
+          <button type="submit" id="publish-post-submit-btn" class="btn-primary-red lg-btn">
+            <span class="material-symbols-rounded" translate="no">publish</span>
+            <span class="btn-text" id="publish-btn-label">نشر الآن فوراً</span>
+          </button>
+          <button type="button" id="cancel-editor-modal-btn" class="btn-outline">إلغاء</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- إشعار التفاعل الفوري (Toast) -->
+  <div id="portal-toast" class="portal-toast hidden" role="status" aria-live="polite"></div>
+
+  <!-- المحرك البرمجي للبوابة التحريرية الذكية -->
   <script type="module" src="./app.js"></script>
 </body>
 </html>
